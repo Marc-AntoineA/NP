@@ -10,7 +10,9 @@
   "dependencies": {
     "core-js": "^2.6.5",
     "visjs-network": "^4.24.7",
-    "vue": "^2.6.10"
+    "vue": "^2.6.10",
+    "vue-router": "^3.0.6",
+    "vuex-router-sync": "^5.0.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.8.0",

@@ -1,15 +1,12 @@
 <template>
-  <div class="hello">
-    <h1>Tentatives</h1>
     <div ref='visualization'></div>
-  </div>
 </template>
 
 <script>
 import { DataSet, Network } from 'visjs-network';
 
 export default {
-  name: 'HelloWorld',
+  name: 'p-network',
   props: {
     msg: String
   },
@@ -39,7 +36,11 @@ export default {
       edges: edges
     };
 
-    const options = {};
+    const options = {
+      toResize: true,
+      height: '100%',
+      width: '100%'
+    };
     new Network(container, data, options);
   },
 }
@@ -47,18 +48,4 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
 </style>
