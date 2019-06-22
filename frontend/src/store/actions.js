@@ -26,5 +26,8 @@ export default {
      commit('SET_EDGES', { edges });
      resolve(edges);
     });
+  },
+  FETCH_NEIGHBORS: ({ commit, state, dispatch }) => {
+    
   }
 }

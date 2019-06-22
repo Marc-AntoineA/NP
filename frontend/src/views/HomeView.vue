@@ -1,7 +1,8 @@
 <template>
   <div>
     <!--<h1>Home View 3</h1>-->
-    <p-network id='network' :nodes='nodes' :edges='edges'/>
+    <p-network id='network' :nodes='nodes' :edges='edges'
+      @node-selection='onNodeSelection' @edge-selection='onEdgeSelection'/>
   </div>
 </template>
 
@@ -14,6 +15,14 @@ export default {
   components: { PNetwork },
   methods: {
     onSubmit() {
+    }
+  },
+  methods: {
+    onNodeSelection: function(nodeId) {
+      console.log('Selected node ', nodeId);
+    },
+    onEdgeSelection: function(edgeId) {
+      console.log('Selected edge ', edgeId);
     }
   },
   computed: {
