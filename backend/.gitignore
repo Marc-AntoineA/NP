@@ -1,1 +1,3 @@
 python_env/
+db.sqlite3
+engine/migrations
