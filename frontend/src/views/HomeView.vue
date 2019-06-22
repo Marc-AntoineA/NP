@@ -1,7 +1,7 @@
 <template>
   <div>
     <!--<h1>Home View 3</h1>-->
-    <p-network id='network'/>
+    <p-network id='network' :nodes='nodes' :edges='edges'/>
   </div>
 </template>
 
@@ -16,7 +16,17 @@ export default {
     onSubmit() {
     }
   },
+  computed: {
+    nodes: function () {
+      return Object.values(this.$store.state.nodes);
+    },
+    edges: function() {
+      return Object.values(this.$store.state.edges);
+    }
+  },
   beforeMount() {
+    this.$store.dispatch('FETCH_NODES');
+    this.$store.dispatch('FETCH_EDGES');
   }
 }
 </script>
