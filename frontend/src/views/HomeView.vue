@@ -18,8 +18,9 @@ export default {
     }
   },
   methods: {
-    onNodeSelection: function(nodeId) {
-      console.log('Selected node ', nodeId);
+    onNodeSelection: function(imageId) {
+      console.log('Selected node ', imageId);
+      this.$store.dispatch('FETCH_NEIGHBORS', imageId)
     },
     onEdgeSelection: function(edgeId) {
       console.log('Selected edge ', edgeId);

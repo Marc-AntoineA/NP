@@ -30,6 +30,12 @@ class AllNeighborsOfNode(APIView):
         for k in range(n_closest):
             # todo (+1) useful because images indexes start from 1
             closest = np.argmax(distances[image_id]) + 1
-            neighbors.append(closest)
+            # todo check if order
+            (from_image, to_image) = (str(closest), str(image_id + 1)) if closest < image_id else (str(image_id + 1), str(closest))
+            neighbors.append({
+                'id': from_image + '_' + to_image,
+                'from': from_image,
+                'to': to_image
+                });
             distances[image_id][closest - 1] *= -1
         return Response(neighbors)
