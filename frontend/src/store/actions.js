@@ -9,8 +9,8 @@ export default {
         edges.forEach((edge) => {
           commit('SET_NODES', {
             nodes: [
-              { id: edge.from, label: 'Image ' + edge.from, shape: 'image', image: '/data/images_full/' + edge.from + '.jpg' },
-              { id: edge.to, label: 'Image ' + edge.to, shape: 'image', image: '/data/images_full/' + edge.to + '.jpg' }
+              { id: edge.from, shape: 'image', image: '/data/images_full/' + edge.from + '.jpg', size:'35' }, // label: 'Image ' + edge.to,
+              { id: edge.to, shape: 'image', image: '/data/images_full/' + edge.to + '.jpg', size:'35' }
             ]});
         });
         commit('SET_EDGES', { edges });
@@ -26,11 +26,7 @@ export default {
   FETCH_NODES: ({ commit, state, dispatch }) => {
     return new Promise((resolve, reject) => {
       const nodes = [
-        { id: 1, label: 'Image 1', shape: 'image', image: '/data/images_full/1.jpg' }/*,
-        { id: 2, label: 'Node 2' },
-        { id: 3, label: 'Node 3' },
-        { id: 4, label: 'Node 4' },
-        { id: 5, label: 'Node 5' }*/
+        { id: '1', shape: 'image', image: '/data/images_full/1.jpg' }
       ];
       commit('SET_NODES', { nodes });
       resolve(nodes);

@@ -1,18 +1,22 @@
 <template>
   <div>
-    <!--<h1>Home View 3</h1>-->
+    <p-search-header/>
     <p-network id='network' :nodes='nodes' :edges='edges'
-      @node-selection='onNodeSelection' @edge-selection='onEdgeSelection'/>
+      @node-selection='onNodeSelection' @edge-selection='onEdgeSelection'
+      @node-double-selection='onNodeDoubleSelection' @edge-double-selection='onEdgeDoubleSelection'/>
+    <p-picture-tools/>
   </div>
 </template>
 
 <script>
 
 import PNetwork from '../components/Network.vue';
+import PSearchHeader from '../components/SearchHeader.vue';
+import PPictureTools from '../components/PictureTools.vue';
 
 export default {
   name: 'Home',
-  components: { PNetwork },
+  components: { PNetwork, PSearchHeader, PPictureTools },
   methods: {
     onSubmit() {
     }
@@ -20,10 +24,16 @@ export default {
   methods: {
     onNodeSelection: function(imageId) {
       console.log('Selected node ', imageId);
-      this.$store.dispatch('FETCH_NEIGHBORS', imageId)
     },
     onEdgeSelection: function(edgeId) {
       console.log('Selected edge ', edgeId);
+    },
+    onNodeDoubleSelection: function(imageId) {
+      console.log('Db clicked on ', imageId);
+      this.$store.dispatch('FETCH_NEIGHBORS', imageId);
+    },
+    onEdgeDoubleSelection: function(edgeId) {
+      console.log('Db clicked on ', edgeId);
     }
   },
   computed: {

@@ -25,7 +25,7 @@ class AllNeighborsOfNode(APIView):
         distances = compute_distances(header, images)
         n_images = len(images)
 
-        n_closest = 5
+        n_closest = 3
         neighbors = []
         for k in range(n_closest):
             # todo (+1) useful because images indexes start from 1
@@ -35,7 +35,8 @@ class AllNeighborsOfNode(APIView):
             neighbors.append({
                 'id': from_image + '_' + to_image,
                 'from': from_image,
-                'to': to_image
+                'to': to_image,
+                'width': 10*distances[image_id][closest - 1]
                 });
             distances[image_id][closest - 1] *= -1
         return Response(neighbors)

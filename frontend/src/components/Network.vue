@@ -71,8 +71,6 @@ export default {
       deep: true,
     });
 
-
-
     const network = new Network(container, this.graphDataSet, options);
 
     const self = this;
@@ -85,6 +83,18 @@ export default {
         self.$emit('edge-selection', selectedEdges[0]);
       } else {
         throw new Error('Unknown click event');
+      }
+    });
+
+    network.on('doubleClick', function(params) {
+      const selectedNodes = params.nodes;
+      const selectedEdges = params.edges;
+      if (selectedNodes.length === 1) {
+        self.$emit('node-double-selection', selectedNodes[0])
+      } else if (selectedEdges.length == 1) {
+        self.$emit('edge-double-selection', selectedEdges[0]);
+      } else {
+        throw new Error('Unknown db click event');
       }
     });
   },
