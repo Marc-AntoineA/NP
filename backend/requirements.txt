@@ -2,3 +2,4 @@ matplotlib
 numpy
 django
 django-rest-framework
+paramiko
