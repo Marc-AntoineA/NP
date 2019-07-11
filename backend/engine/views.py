@@ -22,6 +22,7 @@ from .models import *
 import paramiko
 from PIL import Image
 import json
+from .serializers import TagSerializer
 
 class AllNeighborsOfNode(APIView):
     """
@@ -49,6 +50,32 @@ class AllNeighborsOfNode(APIView):
                 });
             distances[image_id][closest - 1] *= -1
         return Response(neighbors)
+
+class TagsView(APIView):
+
+    def get(self, request, picture_id, format=None):
+        tags = Picture.objects.get(id=picture_id).tags.all()
+        serialized_tags = TagSerializer(tags, many=True)
+        return Response(serialized_tags.data)
+
+    def post(self, request, picture_id, format=None):
+        data_tags = request.data
+        picture = Picture.objects.get(id=picture_id)
+        picture.tags.clear()
+        print(data_tags)
+        for data_tag in data_tags:
+
+            tag = Tag.objects.get_or_create(tag=data_tag['tag'])[0]
+            print("adding {}".format(tag))
+            picture.tags.add(tag)
+
+        return Response(data_tags)
+
+
+    def delete(self, request, picture_id, format=None):
+        pass
+
+
 
 # todo warning.
 @csrf_exempt

@@ -1,5 +1,6 @@
 from django.db import models
 import uuid
+import unidecode
 
 class Tag(models.Model):
     """
@@ -11,6 +12,9 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.tag
+
+    def __eq__(self, other):
+        return unidecode.unidecode(self.lower()) == unidecode.unidecode(other.lower())
 
 
 class Picture(models.Model):

@@ -5,7 +5,8 @@ from rest_framework.urlpatterns import format_suffix_patterns
 app_name = 'engine'
 urlpatterns = [
     path('neighbors/<str:image_id>/', views.AllNeighborsOfNode.as_view()),
-    path('test/upload', views.testUploadPicture)
+    path('upload/picture', views.testUploadPicture),
+    path('tags/<str:picture_id>', views.TagsView.as_view())
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
