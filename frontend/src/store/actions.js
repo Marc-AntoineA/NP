@@ -1,9 +1,14 @@
-import { fetchNeigborsForImageId } from '../api';
+import {
+  fetchNeigborsForPictureId,
+  fetchTagsForPictureId,
+  postTagsForPictureId,
+  fetchAllTags
+ } from '../api';
 
 export default {
-  FETCH_NEIGHBORS: ( { commit,  state, dispatch }, imageId) => {
+  FETCH_NEIGHBORS: ( { commit,  state, dispatch }, pictureId) => {
     return new Promise((resolve, reject) => {
-      fetchNeigborsForImageId(imageId).then((edges) => {
+      fetchNeigborsForPictureId(pictureId).then((edges) => {
 
         // TODO remove
         edges.forEach((edge) => {
@@ -15,13 +20,61 @@ export default {
         });
         commit('SET_EDGES', { edges });
         resolve(edges);
-      }).catch(({code, error}) => {
+      }).catch(({ code, error}) => {
         if (code == 401) dispatch('LOGOUT');
         reject(error);
       });
     });
   },
-
+  FETCH_TAGS: ({ commit, state, dispatch }, pictureId) => {
+    return new Promise((resolve, reject) => {
+      fetchTagsForPictureId(pictureId)
+      .then((tags) => {
+        commit('SET_TAGS', { pictureId, tags });
+        resolve(tags);
+      }).catch(({ code, error}) => {
+        if (code == 401) dispatch('LOGOUT');
+        reject(error);
+      });
+    });
+  },
+  UPDATE_TAGS: ({ commit, state, dispatch }, { pictureId, tags }) => {
+    return new Promise((resolve, reject) => {
+      postTagsForPictureId(pictureId, tags)
+      .then((tags) => {
+        commit('SET_TAGS', { pictureId, tags });
+        resolve(tags);
+      }).catch(({ code, error }) => {
+        if (code == 401) dispatch('LOGOUT');
+        reject(error);
+      });
+    });
+  },
+  ADD_TAG: ({ commit, state, dispatch }, { pictureId, tag }) => {
+    return new Promise((resolve, reject) => {
+      commit('ADD_TAG', { pictureId, tag });
+      postTagsForPictureId(pictureId, state.tags[pictureId])
+      .then((tags) => {
+        commit('SET_TAGS', { pictureId, tags });
+        resolve(tags);
+      }).catch(({ code, error }) => {
+        if (code == 401) dispatch('LOGOUT');
+        reject(error);
+      });
+    });
+  },
+  FETCH_OPTIONS: ({ commit, state, dispatch }) => {
+    return new Promise((resolve, reject) => {
+      fetchAllTags()
+      .then((tags) => {
+        commit('SET_OPTIONS', tags);
+        resolve(tags);
+      }).catch(({ code, error }) => {
+        if (code == 401) dispatch('LOGOUT');
+        reject(error);
+      })
+    })
+  },
   // TODO remove
   FETCH_NODES: ({ commit, state, dispatch }) => {
     return new Promise((resolve, reject) => {

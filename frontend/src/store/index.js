@@ -10,7 +10,9 @@ export function createStore() {
   return new Vuex.Store({
     state: {
       nodes: {/* [id: String]: Process */},
-      edges: {/* {from: id, to: id}*/}
+      edges: {/* {from: id, to: id}*/},
+      tags: {/* {id, [] }*/},
+      options: []
     },
     actions,
     mutations,

@@ -4,8 +4,6 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404, HttpResponse
-#from .models import *
-#from .serializers import *
 from rest_framework.renderers import TemplateHTMLRenderer
 from django.db.models import F
 from django.db import IntegrityError
@@ -22,7 +20,6 @@ from .models import *
 import paramiko
 from PIL import Image
 import json
-from .serializers import TagSerializer
 
 class AllNeighborsOfNode(APIView):
     """
@@ -51,30 +48,29 @@ class AllNeighborsOfNode(APIView):
             distances[image_id][closest - 1] *= -1
         return Response(neighbors)
 
+
 class TagsView(APIView):
 
     def get(self, request, picture_id, format=None):
         tags = Picture.objects.get(id=picture_id).tags.all()
-        serialized_tags = TagSerializer(tags, many=True)
-        return Response(serialized_tags.data)
+        response = [tag.tag for tag in tags]
+        return Response(response)
 
     def post(self, request, picture_id, format=None):
         data_tags = request.data
         picture = Picture.objects.get(id=picture_id)
         picture.tags.clear()
-        print(data_tags)
         for data_tag in data_tags:
-
-            tag = Tag.objects.get_or_create(tag=data_tag['tag'])[0]
-            print("adding {}".format(tag))
+            tag = Tag.objects.get_or_create(tag=data_tag)[0]
             picture.tags.add(tag)
-
         return Response(data_tags)
 
 
-    def delete(self, request, picture_id, format=None):
-        pass
-
+class AllTagsView(APIView):
+    def get(self, request, format=None):
+        tags = Tag.objects.all()
+        response = [tag.tag for tag in tags]
+        return Response(response)
 
 
 # todo warning.

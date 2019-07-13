@@ -6,6 +6,7 @@ app_name = 'engine'
 urlpatterns = [
     path('neighbors/<str:image_id>/', views.AllNeighborsOfNode.as_view()),
     path('upload/picture', views.testUploadPicture),
+    path('tags', views.AllTagsView.as_view()),
     path('tags/<str:picture_id>', views.TagsView.as_view())
 ]
 

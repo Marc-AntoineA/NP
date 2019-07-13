@@ -6,6 +6,7 @@ Vue.use(Router);
 // import pages
 const LoginView = () => import('../views/LoginView.vue');
 const HomeView = () => import('../views/HomeView.vue');
+const EditView = () => import('../views/EditView.vue');
 
 export function createRouter() {
   return new Router({
@@ -24,6 +25,12 @@ export function createRouter() {
         name: 'login',
         component: LoginView,
         meta: { requiresAuth: false }
+      },
+      {
+        path: '/edit/:pictureId',
+        name: 'edit',
+        component: EditView,
+        meta: { requiresAuth: true }
       }
     ]
   });

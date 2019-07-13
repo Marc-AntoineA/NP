@@ -21,10 +21,34 @@ function request({ url, data, token }, method, cache) {
 
 const API_PATH = 'http://localhost:8000/';
 
-export function fetchNeigborsForImageId(imageId) {
+export function fetchNeigborsForPictureId(pictureId) {
   return request({
-    url: API_PATH + 'neighbors/' + imageId,
+    url: API_PATH + 'neighbors/' + pictureId,
     data: undefined,
     token: ''
+  }, 'get', 'no-cache');
+}
+
+export function fetchTagsForPictureId(pictureId) {
+  return request({
+    url: API_PATH + 'tags/' + pictureId,
+    data: undefined,
+    token: ''
+  }, 'get', 'no-cache');
+}
+
+export function postTagsForPictureId(pictureId, tags) {
+  return request({
+    url: API_PATH + 'tags/' + pictureId,
+    data: tags,
+    token: ''
+  }, 'post');
+}
+
+export function fetchAllTags() {
+  return request({
+    url: API_PATH + 'tags',
+    data: undefined,
+    token: '',
   }, 'get', 'no-cache');
 }
