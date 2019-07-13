@@ -1,5 +1,6 @@
 python_env/
 db.sqlite3
+db_tests.sqlite3
 engine/migrations
 backend/__pycache__
 engine/__pycache__

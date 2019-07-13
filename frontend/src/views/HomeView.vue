@@ -45,8 +45,7 @@ export default {
     }
   },
   beforeMount() {
-    this.$store.dispatch('FETCH_NODES');
-    this.$store.dispatch('FETCH_EDGES');
+    this.$store.dispatch('FETCH_RANDOM_PICTURE');
   }
 }
 </script>

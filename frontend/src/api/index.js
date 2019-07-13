@@ -52,3 +52,11 @@ export function fetchAllTags() {
     token: '',
   }, 'get', 'no-cache');
 }
+
+export function fetchRandomPicture() {
+  return request({
+    url: API_PATH + 'pictures/random',
+    data: undefined,
+    token: '',
+  }, 'get', 'no-cache');
+}

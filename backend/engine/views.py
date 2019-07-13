@@ -11,6 +11,7 @@ from django.template import loader
 from django.http import HttpResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
+from django.db.models import Count, Min
 
 import numpy as np
 import hashlib
@@ -20,32 +21,52 @@ from .models import *
 import paramiko
 from PIL import Image
 import json
+from random import random, randint
 
 class AllNeighborsOfNode(APIView):
     """
     List all neighbors available for a given node
     """
 
-    def get(self, request, image_id, format=None):
-        image_id = int(image_id) - 1 # todo index <-> id
-        (header, images) = load_database('engine/database.csv')
-        distances = compute_distances(header, images)
-        n_images = len(images)
+    # todo optim l'algo
+    def get(self, request, picture_id, format=None):
+        frequencies = Tag.objects.all().annotate(count=Count('picture'))
+        main_picture = Picture.objects.get(id=picture_id)
+        main_tags = main_picture.tags.all()
 
-        n_closest = 3
+        distances = {}
+        pictures = Picture.objects.all()
+
+        for picture in pictures:
+            if str(picture.id) == picture_id:
+                distances[picture_id] = 0
+                continue
+
+            common_tags = main_tags.intersection(picture.tags.all())
+            dist = 0
+            for tag in common_tags:
+                freq = frequencies.get(tag=tag.tag).count
+                dist += 1./freq + 0.01*random()
+
+            distances[str(picture.id)] = dist
+
+        n_closest = 5
         neighbors = []
+        values = list(distances.values())
         for k in range(n_closest):
-            # todo (+1) useful because images indexes start from 1
-            closest = np.argmax(distances[image_id]) + 1
+            closest_index = np.argmax(values)
+            dist = values[closest_index]
+            closest_id = str(list(distances.keys())[closest_index])
+
             # todo check if order
-            (from_image, to_image) = (str(closest), str(image_id + 1)) if closest < image_id else (str(image_id + 1), str(closest))
+            (from_image, to_image) = (closest_id, picture_id) if closest_id < picture_id else (picture_id, closest_id)
             neighbors.append({
-                'id': from_image + '_' + to_image,
+                'id': from_image + '__' + to_image,
                 'from': from_image,
                 'to': to_image,
-                'width': 10*distances[image_id][closest - 1] # voir ou on fait ça. Ptet pas top ici non plus
+                'width': 10*dist # voir ou on fait ça. Ptet pas top ici non plus
                 });
-            distances[image_id][closest - 1] *= -1
+            values[closest_index] *= -1
         return Response(neighbors)
 
 
@@ -71,6 +92,13 @@ class AllTagsView(APIView):
         tags = Tag.objects.all()
         response = [tag.tag for tag in tags]
         return Response(response)
+
+class GetRandomPicture(APIView):
+    def get(self, request, format=None):
+        count = Picture.objects.count()
+        random_picture = Picture.objects.all()[randint(0, count - 1)]
+
+        return Response({ 'id': random_picture.id })
 
 
 # todo warning.
@@ -131,3 +159,15 @@ def testUploadPicture(request):
         return HttpResponse('Error in transfert. Nothing done.', status='504')
     else:
         return HttpResponse('Image uploaded successfully', status='201')
+
+def listPicturesLessTags(request):
+    # todo. pour le moment, uniquement les photos sans tags
+    pictures = Picture.objects.annotate(count_tags=Count('tags'))
+    count_tags_min = pictures.aggregate(Min('count_tags'))['count_tags__min']
+    pictures = pictures.filter(count_tags=count_tags_min)
+
+    response = ''
+    for index, picture in enumerate(pictures):
+        response += "<a href='http://localhost:8080/edit/{}' target='_blank'>Image {}</a><br/>".format(picture.id, index)
+
+    return HttpResponse(response)
