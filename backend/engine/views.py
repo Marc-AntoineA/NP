@@ -64,6 +64,7 @@ class AllNeighborsOfNode(APIView):
                 'id': from_image + '__' + to_image,
                 'from': from_image,
                 'to': to_image,
+                'tags_new_node': [tag.tag for tag in Picture.objects.get(id=closest_id).tags.all()],
                 'width': 10*dist # voir ou on fait ça. Ptet pas top ici non plus
                 });
             values[closest_index] *= -1
@@ -159,6 +160,10 @@ def testUploadPicture(request):
         return HttpResponse('Error in transfert. Nothing done.', status='504')
     else:
         return HttpResponse('Image uploaded successfully', status='201')
+
+def deletePicture(request, picture_id):
+    Picture.objects.get(id=picture_id).delete()
+    return HttpResponse('done')
 
 def listPicturesLessTags(request):
     # todo. pour le moment, uniquement les photos sans tags

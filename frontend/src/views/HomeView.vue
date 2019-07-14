@@ -4,6 +4,8 @@
     <p-network id='network' :nodes='nodes' :edges='edges'
       @node-selection='onNodeSelection' @edge-selection='onEdgeSelection'
       @node-double-selection='onNodeDoubleSelection' @edge-double-selection='onEdgeDoubleSelection'/>
+
+    <p-network id='network' :nodes='tagsNodes' :edges='tagsEdges'/>
     <p-picture-tools/>
   </div>
 </template>
@@ -31,6 +33,7 @@ export default {
     onNodeDoubleSelection: function(imageId) {
       console.log('Db clicked on ', imageId);
       this.$store.dispatch('FETCH_NEIGHBORS', imageId);
+      console.log(this.$store.getters.TAGS_NETWORK);
     },
     onEdgeDoubleSelection: function(edgeId) {
       console.log('Db clicked on ', edgeId);
@@ -42,6 +45,12 @@ export default {
     },
     edges: function() {
       return Object.values(this.$store.state.edges);
+    },
+    tagsNodes: function() {
+      return Object.values(this.$store.getters.TAGS_NETWORK.nodes);
+    },
+    tagsEdges: function() {
+      return Object.values(this.$store.getters.TAGS_NETWORK.edges);
     }
   },
   beforeMount() {

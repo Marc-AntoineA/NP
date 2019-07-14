@@ -13,11 +13,16 @@ export default {
 
         // TODO remove
         edges.forEach((edge) => {
+
+          const newPictureId = edge.from === pictureId ? edge.to : edge.from;
+
           commit('SET_NODES', {
             nodes: [
-              { id: edge.from, shape: 'image', image: 'http://localhost/thumbnails/' + edge.from + '.jpg', size:'35' }, // label: 'Image ' + edge.to,
-              { id: edge.to, shape: 'image', image: 'http://localhost/thumbnails/' + edge.to + '.jpg', size:'35' }
-            ]});
+              { id: newPictureId, shape: 'image', image: 'http://localhost/thumbnails/' + newPictureId + '.jpg', size:'35' }
+            ]
+          });
+
+          commit('SET_TAGS', { pictureId: newPictureId, tags: edge.tags_new_node });
         });
         commit('SET_EDGES', { edges });
         resolve(edges);
