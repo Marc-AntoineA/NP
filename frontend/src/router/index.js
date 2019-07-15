@@ -7,6 +7,7 @@ Vue.use(Router);
 const LoginView = () => import('../views/LoginView.vue');
 const HomeView = () => import('../views/HomeView.vue');
 const EditView = () => import('../views/EditView.vue');
+const WalkView = () => import('../views/WalkView.vue');
 
 export function createRouter() {
   return new Router({
@@ -31,7 +32,13 @@ export function createRouter() {
         name: 'edit',
         component: EditView,
         meta: { requiresAuth: true }
-      }
+      },
+      {
+        path: '/walk/:pictureId',
+        name: 'walk',
+        component: WalkView,
+        meta: { requiresAuth: true }
+      },
     ]
   });
 }
