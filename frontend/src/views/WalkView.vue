@@ -1,5 +1,9 @@
 <template>
-  <div>
+  <div class='background'>
+    <router-link class='close-button' :to="{ name: 'home'}">
+      <font-awesome-icon class='close-icon' icon="times" size='2x'/>
+    </router-link>
+    <p-spinner class='center' :show="loading"></p-spinner>
     <div v-if='!loading' class='picture-view'>
       <img class='image-full' :src='pictureFullUrl'/>
       <ul class='images-preview'>
@@ -15,11 +19,13 @@
 
 <script>
 
+import PSpinner from '../components/Spinner.vue';
 
 export default {
   name: 'Walk',
   props: {},
   components: {
+    PSpinner
   },
   data: () => ({
     loading: true,
@@ -72,15 +78,44 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .image-full {
-  max-height: 60vh
+  max-height: calc(100vh - 120px);
+  max-width: 95vw;
+  margin-bottom: 5px;
 }
 
 .images-preview li {
   display: inline-block;
+  margin: 0px 4px;
+}
+
+.images-preview {
+  margin: 5px;
 }
 
 .image-thumbnail {
-  height: 80px;
+  height: 90px;
 }
 
+.background {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: black;
+}
+
+.center {
+  position: absolute;
+  top: 48vh;
+}
+
+.close-button {
+  position: absolute;
+  right: 30px;
+  top: 20px;
+}
 </style>

@@ -13,15 +13,23 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Count, Min
 
-import numpy as np
 import hashlib
-# todo rm utils
-from .utils import load_database, compute_distances
 from .models import *
 import paramiko
 from PIL import Image
 import json
 from random import random, randint
+from .graph_utils import compute_distances_to, get_neighbors_from_distances
+
+class AllGraph(APIView):
+    def get(self, request, format=None):
+        graph = {}
+        pictures = Picture.objects.all()
+        frequencies = Tag.objects.all().annotate(count=Count('picture'))
+        for picture in list(pictures):
+            distances = compute_distances_to(str(picture.id), frequencies=frequencies)
+            graph[str(picture.id)] = get_neighbors_from_distances(distances, nb_neighbors=5)
+        return Response(graph)
 
 class AllNeighborsOfNode(APIView):
     """
@@ -30,45 +38,23 @@ class AllNeighborsOfNode(APIView):
 
     # todo optim l'algo
     def get(self, request, picture_id, format=None):
-        frequencies = Tag.objects.all().annotate(count=Count('picture'))
-        main_picture = Picture.objects.get(id=picture_id)
-        main_tags = main_picture.tags.all()
+        distances = compute_distances_to(picture_id)
 
-        distances = {}
-        pictures = Picture.objects.all()
+        neighbors = get_neighbors_from_distances(distances, nb_neighbors=5)
 
-        for picture in pictures:
-            if str(picture.id) == picture_id:
-                distances[picture_id] = 0
-                continue
-
-            common_tags = main_tags.intersection(picture.tags.all())
-            dist = 0
-            for tag in common_tags:
-                freq = frequencies.get(tag=tag.tag).count
-                dist += 1./freq + 0.01*random()
-
-            distances[str(picture.id)] = dist
-
-        n_closest = 5
-        neighbors = []
-        values = list(distances.values())
-        for k in range(n_closest):
-            closest_index = np.argmax(values)
-            dist = values[closest_index]
-            closest_id = str(list(distances.keys())[closest_index])
+        neighbors_result = []
+        for neighbor_id in neighbors:
 
             # todo check if order
-            (from_image, to_image) = (closest_id, picture_id) if closest_id < picture_id else (picture_id, closest_id)
-            neighbors.append({
+            (from_image, to_image) = (neighbor_id, picture_id) if neighbor_id < picture_id else (picture_id, neighbor_id)
+            neighbors_result.append({
                 'id': from_image + '__' + to_image,
                 'from': from_image,
                 'to': to_image,
-                'tags_new_node': [tag.tag for tag in Picture.objects.get(id=closest_id).tags.all()],
-                'width': 10*dist # voir ou on fait ça. Ptet pas top ici non plus
+                'tags_new_node': [tag.tag for tag in Picture.objects.get(id=neighbor_id).tags.all()],
+                'width': 10*distances[neighbor_id]
                 });
-            values[closest_index] *= -1
-        return Response(neighbors)
+        return Response(neighbors_result)
 
 
 class TagsView(APIView):
@@ -104,7 +90,7 @@ class GetRandomPicture(APIView):
 
 # todo warning.
 @csrf_exempt
-def testUploadPicture(request):
+def test_upload_picture(request):
     if (not request.method) or ('picture' not in request.FILES):
         raise Http404
 
@@ -161,11 +147,11 @@ def testUploadPicture(request):
     else:
         return HttpResponse('Image uploaded successfully', status='201')
 
-def deletePicture(request, picture_id):
+def delete_picture(request, picture_id):
     Picture.objects.get(id=picture_id).delete()
     return HttpResponse('done')
 
-def listPicturesLessTags(request):
+def list_picture_less_tags(request):
     # todo. pour le moment, uniquement les photos sans tags
     pictures = Picture.objects.annotate(count_tags=Count('tags'))
     count_tags_min = pictures.aggregate(Min('count_tags'))['count_tags__min']

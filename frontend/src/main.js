@@ -4,6 +4,15 @@ import { sync } from 'vuex-router-sync';
 import { createRouter } from './router';
 import { createStore } from './store';
 
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+library.add(faTimes)
+
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+
+
 export function createApp() {
   const router = createRouter();
   const store = createStore();
