@@ -19,16 +19,17 @@ import paramiko
 from PIL import Image
 import json
 from random import random, randint
-from .graph_utils import compute_distances_to, get_neighbors_from_distances
+from .graph_utils import compute_distances_to, get_neighbors_from_distances, has_to_be_computed_again, compute_neighbors_to
 
 class AllGraph(APIView):
     def get(self, request, format=None):
         graph = {}
         pictures = Picture.objects.all()
         frequencies = Tag.objects.all().annotate(count=Count('picture'))
-        for picture in list(pictures):
-            distances = compute_distances_to(str(picture.id), frequencies=frequencies)
-            graph[str(picture.id)] = get_neighbors_from_distances(distances, nb_neighbors=5)
+        for picture in pictures:
+            if has_to_be_computed_again(str(picture.id)):
+                compute_neighbors_to(str(picture.id))
+            graph[str(picture.id)] = [n.id for n in Neighbors.objects.get(from_picture__id=picture.id).to_pictures.all()]
         return Response(graph)
 
 class AllNeighborsOfNode(APIView):
@@ -38,21 +39,21 @@ class AllNeighborsOfNode(APIView):
 
     # todo optim l'algo
     def get(self, request, picture_id, format=None):
-        distances = compute_distances_to(picture_id)
+        if has_to_be_computed_again(picture_id):
+            compute_neighbors_to(picture_id)
 
-        neighbors = get_neighbors_from_distances(distances, nb_neighbors=5)
+        neighbors = Neighbors.objects.get(from_picture__id=picture_id).to_pictures.all()
 
         neighbors_result = []
-        for neighbor_id in neighbors:
-
+        for neighbor in neighbors:
+            neighbor_id = str(neighbor.id)
             # todo check if order
             (from_image, to_image) = (neighbor_id, picture_id) if neighbor_id < picture_id else (picture_id, neighbor_id)
             neighbors_result.append({
                 'id': from_image + '__' + to_image,
                 'from': from_image,
                 'to': to_image,
-                'tags_new_node': [tag.tag for tag in Picture.objects.get(id=neighbor_id).tags.all()],
-                'width': 10*distances[neighbor_id]
+                'tags_new_node': [tag.tag for tag in Picture.objects.get(id=neighbor_id).tags.all()]
                 });
         return Response(neighbors_result)
 

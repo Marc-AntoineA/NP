@@ -9,6 +9,7 @@ class Tag(models.Model):
     Be careful in the way for spelling tags to avoid having 'Chambery', 'chambéry', 'chy', 'Chy'...
     """
     tag = models.CharField(max_length=40, primary_key=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.tag
@@ -23,6 +24,15 @@ class Picture(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     tags = models.ManyToManyField(Tag, blank=True, null=True)
     hash = models.CharField(max_length=80, unique=True, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.id)
+
+class Neighbors(models.Model):
+    updated_at = models.DateTimeField(auto_now=True)
+    from_picture = models.OneToOneField(Picture, blank=False, null=True, on_delete=models.CASCADE, related_name='from_picture')
+    to_pictures = models.ManyToManyField(Picture, blank=True, null=True, related_name='to_pictures')
+
+    def __str__(self):
+        return 'Neigbors of {}'.format(self.from_picture_id)
