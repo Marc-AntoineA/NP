@@ -8,6 +8,7 @@ const LoginView = () => import('../views/LoginView.vue');
 const HomeView = () => import('../views/HomeView.vue');
 const EditView = () => import('../views/EditView.vue');
 const WalkView = () => import('../views/WalkView.vue');
+const GraphAnalyzerView = () => import('../views/GraphAnalyzerView.vue');
 
 export function createRouter() {
   return new Router({
@@ -39,6 +40,12 @@ export function createRouter() {
         component: WalkView,
         meta: { requiresAuth: true }
       },
+      {
+        path: '/analyze',
+        name: 'analyze',
+        component: GraphAnalyzerView,
+        meta: { requiresAuth: true }
+      }
     ]
   });
 }

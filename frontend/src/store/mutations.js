@@ -22,5 +22,8 @@ export default {
   },
   ADD_OPTION: (state, tag) => {
     Vue.set(state.options, state.options.length, tag);
+  },
+  SET_GRAPH: (state, graph) => {
+    state.graph = graph;
   }
 }

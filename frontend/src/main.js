@@ -8,12 +8,6 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-async function test() {
-  const wasm = await import('wasm-graph-analyzer');
-  wasm.greet();
-  // console.log(`%c WASM Loaded `, `background: #049741; color: #fff`);
-}
-test();
 library.add(faTimes)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)

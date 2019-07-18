@@ -3,7 +3,8 @@ import {
   fetchTagsForPictureId,
   postTagsForPictureId,
   fetchAllTags,
-  fetchRandomPicture
+  fetchRandomPicture,
+  fetchWholeGraph
  } from '../api';
 
 export default {
@@ -82,7 +83,6 @@ export default {
       });
     });
   },
-  // TODO remove
   FETCH_RANDOM_PICTURE: ({ commit, state, dispatch }) => {
     return new Promise((resolve, reject) => {
       fetchRandomPicture()
@@ -90,6 +90,18 @@ export default {
         const node = { id: picture.id, shape: 'image', image: 'http://localhost/thumbnails/' + picture.id + '.jpg', size: '35'};
         commit('SET_NODES', { nodes: [node] });
         resolve(nodes);
+      }).catch(({ code, error }) => {
+        if (code == 401) dispatch('LOGOUT');
+        reject(error);
+      });
+    });
+  },
+  FETCH_WHOLE_GRAPH: ({ commit, state, dispatch }) => {
+    return new Promise((resolve, reject) => {
+      fetchWholeGraph()
+      .then((graph) => {
+        commit('SET_GRAPH', graph);
+        resolve()
       }).catch(({ code, error }) => {
         if (code == 401) dispatch('LOGOUT');
         reject(error);

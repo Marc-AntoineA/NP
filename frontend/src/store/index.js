@@ -12,7 +12,8 @@ export function createStore() {
       nodes: {/* [id: String]: Process */},
       edges: {/* {from: id, to: id}*/},
       tags: {/* {id, [] }*/},
-      options: []
+      options: [],
+      graph: {}
     },
     actions,
     mutations,

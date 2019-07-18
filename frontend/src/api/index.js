@@ -60,3 +60,11 @@ export function fetchRandomPicture() {
     token: '',
   }, 'get', 'no-cache');
 }
+
+export function fetchWholeGraph() {
+  return request({
+    url: API_PATH + 'neighbors',
+    data: undefined,
+    token: '',
+  }, 'get', 'no-cache');
+}
