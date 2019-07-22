@@ -1,10 +1,10 @@
 <template>
   <div>
-    <p-search-header/>
+    <!-- <p-search-header/> -->
     <p-network id='network' :nodes='nodes' :edges='edges'
       @node-selection='onNodeSelection' @edge-selection='onEdgeSelection'
       @node-double-selection='onNodeDoubleSelection' @edge-double-selection='onEdgeDoubleSelection'/>
-    <p-picture-tools/>
+    <p-picture-tools @go-walk='goWalk()' @edit-image='editImage()' @random-image='randomImage()'/>
   </div>
 </template>
 
@@ -17,12 +17,12 @@ import PPictureTools from '../components/PictureTools.vue';
 export default {
   name: 'Home',
   components: { PNetwork, PSearchHeader, PPictureTools },
-  methods: {
-    onSubmit() {
-    }
-  },
+  data: () => ({
+    selectedNode: undefined
+  }),
   methods: {
     onNodeSelection: function(imageId) {
+      this.selectedNode = imageId
       console.log('Selected node ', imageId);
     },
     onEdgeSelection: function(edgeId) {
@@ -35,6 +35,15 @@ export default {
     },
     onEdgeDoubleSelection: function(edgeId) {
       console.log('Db clicked on ', edgeId);
+    },
+    goWalk: function() {
+      this.$router.push({ name: 'walk', params: { pictureId: this.selectedNode }});
+    },
+    editImage: function() {
+      this.$router.push({ name: 'edit', params: { pictureId: this.selectedNode }});
+    },
+    randomImage: function() {
+      this.$store.dispatch('FETCH_RANDOM_PICTURE');
     }
   },
   computed: {
@@ -55,5 +64,7 @@ export default {
 <style scoped>
 #network {
   height: 100vh;
+  background-color: #111;
 }
+
 </style>

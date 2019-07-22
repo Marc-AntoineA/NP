@@ -19,7 +19,7 @@ export default {
 
           commit('SET_NODES', {
             nodes: [
-              { id: newPictureId, shape: 'image', image: 'http://192.168.2.119/thumbnails/' + newPictureId + '.jpg', size:'35' }
+              { id: newPictureId, shape: 'image', image: 'http://192.168.2.119/thumbnails/' + newPictureId + '.jpg', size:'35', color:'#fefefe' }
             ]
           });
 
@@ -87,9 +87,9 @@ export default {
     return new Promise((resolve, reject) => {
       fetchRandomPicture()
       .then((picture) => {
-        const node = { id: picture.id, shape: 'image', image: 'http://localhost/thumbnails/' + picture.id + '.jpg', size: '35'};
+        const node = { id: picture.id, shape: 'image', image: 'http://localhost/thumbnails/' + picture.id + '.jpg', size: '35', color: '#fefefe'};
         commit('SET_NODES', { nodes: [node] });
-        resolve(nodes);
+        resolve(node);
       }).catch(({ code, error }) => {
         if (code == 401) dispatch('LOGOUT');
         reject(error);

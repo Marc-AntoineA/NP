@@ -1,8 +1,5 @@
 <template>
   <div class='background'>
-    <router-link class='close-button' :to="{ name: 'home'}">
-      <font-awesome-icon class='close-icon' icon="times" size='2x'/>
-    </router-link>
     <p-spinner class='center' :show="loading"></p-spinner>
     <div v-if='!loading' class='picture-view'>
       <img class='image-full' :src='pictureFullUrl'/>
@@ -14,18 +11,21 @@
         </li>
       </ul>
     </div>
+
+    <p-picture-tools @random-image='loadRandomImage()'/>
   </div>
 </template>
 
 <script>
-
+import PPictureTools from '../components/PictureTools.vue';
 import PSpinner from '../components/Spinner.vue';
 
 export default {
   name: 'Walk',
   props: {},
   components: {
-    PSpinner
+    PSpinner,
+    PPictureTools
   },
   data: () => ({
     loading: true,
@@ -50,7 +50,12 @@ export default {
     }
   },
   methods: {
-
+    loadRandomImage() {
+      this.$store.dispatch('FETCH_RANDOM_PICTURE').then((node) => {
+        const pictureId = node.id;
+        this.$router.push({ name: 'walk', params: { pictureId: pictureId }});
+      });
+    }
   },
   beforeRouteUpdate(to, from, next) {
     console.log(to);

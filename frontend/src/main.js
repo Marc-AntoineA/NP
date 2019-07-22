@@ -5,10 +5,12 @@ import { createRouter } from './router';
 import { createStore } from './store';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faTimes, faHome, faArrowsAlt, faCompress, faHiking, faInfo, faSignOutAlt, faEdit, faShareAlt, faDice, faRobot, faQuestion } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-library.add(faTimes)
+library.add(faTimes); library.add(faArrowsAlt); library.add(faSignOutAlt); library.add(faEdit);
+library.add(faHome); library.add(faCompress); library.add(faHiking); library.add(faInfo);
+library.add(faShareAlt); library.add(faDice); library.add(faRobot); library.add(faQuestion);
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

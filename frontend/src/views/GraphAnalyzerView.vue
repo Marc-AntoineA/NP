@@ -12,14 +12,18 @@
     </div>
     <button @click='computeSizeInWasm'>Compute Size in wasm</button>
     <button @click='computeSizeInWasm'>Compute Size in js</button>
+
+    <p-picture-tools/>
   </div>
 </template>
 
 <script>
 
+import PPictureTools from '../components/PictureTools.vue';
+
 export default {
   name: 'GraphAnalyzer',
-  components: { },
+  components: { PPictureTools },
   methods: {
     computeSizeInWasm() {
       console.log('Computing size in wasm');

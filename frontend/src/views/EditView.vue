@@ -7,18 +7,21 @@
        />
       <img class='image-full' :src='pictureFullUrl'/>
     </div>
+
+    <p-picture-tools/>
   </div>
 </template>
 
 <script>
 
 import Multiselect from 'vue-multiselect';
+import PPictureTools from '../components/PictureTools.vue';
 
 export default {
   name: 'Edit',
   props: {},
   components: {
-    Multiselect
+    Multiselect, PPictureTools
   },
   data: () => ({
     loading: true,
