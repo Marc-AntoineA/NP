@@ -13,7 +13,7 @@
     <button @click='computeSizeInWasm'>Compute Size in wasm</button>
     <button @click='computeSizeInWasm'>Compute Size in js</button>
 
-    <p-picture-tools/>
+    <p-picture-tools :displayed="['home']"/>
   </div>
 </template>
 

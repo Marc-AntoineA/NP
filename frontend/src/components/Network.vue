@@ -74,7 +74,7 @@ export default {
     const network = new Network(container, this.graphDataSet, options);
 
     const self = this;
-    network.on('click', function(params) {
+    network.on('selectNode', function(params) {
       const selectedNodes = params.nodes;
       const selectedEdges = params.edges;
       if (selectedNodes.length === 1) {
@@ -85,6 +85,15 @@ export default {
         throw new Error('Unknown click event');
       }
     });
+
+    network.on('deselectNode', function(params) {
+      const newSelectedNodes = params.nodes;
+      const oldSelectedNodes = params.previousSelection.nodes;
+      const removed = oldSelectedNodes.filter(function(n) {
+        return newSelectedNodes.indexOf(n) === -1;
+      });
+      self.$emit('node-deselection', removed);
+    })
 
     network.on('doubleClick', function(params) {
       const selectedNodes = params.nodes;

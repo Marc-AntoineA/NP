@@ -25,5 +25,18 @@ export default {
   },
   SET_GRAPH: (state, graph) => {
     state.graph = graph;
+  },
+  SET_USER: (state, { username, token }) => {
+    Vue.set(state.user, 'username', username);
+    Vue.set(state.user, 'token', token);
+  },
+  REMOVE_USER: (state) => {
+    Vue.set(state.user, 'username', '');
+    Vue.set(state.user, 'token', '');
+  },
+  RESET_GRAPH: (state) => {
+    state.nodes = {};
+    state.edges = {};
+    state.tags = {};
   }
 }

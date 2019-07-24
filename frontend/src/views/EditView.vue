@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class='background'>
     <div v-if='!loading' class='picture-view'>
       <multiselect :value='tags' tag-placeholder='Ajouter ce tag' placeholder='Chercher ou ajouter un tag'
       :options='options' :multiple='true' :taggable='true' @tag='addTag'
@@ -8,7 +8,7 @@
       <img class='image-full' :src='pictureFullUrl'/>
     </div>
 
-    <p-picture-tools/>
+    <p-picture-tools :displayed="['home', 'walk', 'signout', 'share', 'help', 'stats', 'random']"/>
   </div>
 </template>
 
@@ -78,4 +78,17 @@ export default {
   max-height: 65vh;
   max-width: 95vw;
 }
+
+.background {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: #111;
+}
+
 </style>

@@ -13,7 +13,8 @@ export function createStore() {
       edges: {/* {from: id, to: id}*/},
       tags: {/* {id, [] }*/},
       options: [],
-      graph: {}
+      graph: {},
+      user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : { usename: '', token: ''},
     },
     actions,
     mutations,

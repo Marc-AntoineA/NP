@@ -101,11 +101,33 @@ export default {
       fetchWholeGraph()
       .then((graph) => {
         commit('SET_GRAPH', graph);
-        resolve()
+        resolve();
       }).catch(({ code, error }) => {
         if (code == 401) dispatch('LOGOUT');
         reject(error);
       });
+    });
+  },
+  LOGIN: ({ commit, state, dispatch }, { username, password }) => {
+    return new Promise((resolve, reject) => {
+      // todo
+      const token = 'auieauie';
+      localStorage.setItem('user', JSON.stringify({ username, token }));
+      commit('SET_USER', { username, token });
+      resolve(true);
+    });
+  },
+  LOGOUT: ({ commit, state, dispatch }) => {
+    return new Promise((resolve, reject) => {
+      localStorage.removeItem('user');
+      commit('REMOVE_USER');
+      resolve();
+    });
+  },
+  RESET_GRAPH: ({ commit, state, dispatch }) => {
+    return new Promise((resolve, reject) => {
+      commit('RESET_GRAPH')
+      resolve();
     });
   }
 }

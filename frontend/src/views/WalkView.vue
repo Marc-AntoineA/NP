@@ -2,17 +2,21 @@
   <div class='background'>
     <p-spinner class='center' :show="loading"></p-spinner>
     <div v-if='!loading' class='picture-view'>
-      <img class='image-full' :src='pictureFullUrl'/>
+      <div class='full-image-preview'>
+        <img class='image-full' :class='{opaque: !transitionState }' :src='pictureFullUrl'/>
+        <img class='image-full' :class='{opaque: transitionState }' :src='nextPictureUrl'/>
+      </div>
       <ul class='images-preview'>
-        <li v-if='!loadingPreviews' v-for='neighborId in neighbors'>
-          <router-link :to="{ name: 'walk', params: { pictureId: neighborId }}">
-            <img class='image-thumbnail' :src='"http://localhost/thumbnails/" + neighborId + ".jpg"'/>
-          </router-link>
+        <li v-if='displayPreviews' v-for='neighborId in neighbors'>
+          <img class='image-thumbnail' :src='"http://localhost/thumbnails/" + neighborId + ".jpg"'
+            @click='selectPicture(neighborId)' :class='{opaque: !loadingPreviews }'/>
         </li>
       </ul>
     </div>
 
-    <p-picture-tools @random-image='loadRandomImage()'/>
+    <p-picture-tools :displayed="['home', 'random', 'populate', 'edit', 'help', 'stats', 'home', 'share', 'signout']"
+      :automatedMode='automatedMode'
+      @random-image='loadRandomImage()' @populate='handleRandomWalk()' @edit-image='editImage()'/>
   </div>
 </template>
 
@@ -29,7 +33,11 @@ export default {
   },
   data: () => ({
     loading: true,
-    loadingPreviews: true
+    loadingPreviews: true,
+    automatedMode: false,
+    nextPictureUrl: '',
+    transitionState: false,
+    displayPreviews: false
   }),
   computed: {
     pictureId() {
@@ -55,24 +63,49 @@ export default {
         const pictureId = node.id;
         this.$router.push({ name: 'walk', params: { pictureId: pictureId }});
       });
+    },
+    handleRandomWalk() {
+      this.automatedMode = !this.automatedMode;
+      if (this.automatedMode) this.randomWalk();
+    },
+    randomWalk() {
+      setTimeout(() => {
+        console.log(this.automatedMode);
+        if (!this.automatedMode) return;
+        const randomPictureIndex = Math.floor(Math.random()*this.neighbors.length);
+        const nodeId = this.neighbors[randomPictureIndex];
+          this.$router.push({ name: 'walk', params: { pictureId: nodeId }});
+        this.randomWalk();
+      }, 10000);
+    },
+    selectPicture(pictureId) {
+      this.$router.push({ name: 'walk', params: { pictureId }});
+    },
+    editImage() {
+      this.$router.push({ name: 'edit', params: { pictureId: this.pictureId }});
     }
   },
   beforeRouteUpdate(to, from, next) {
-    console.log(to);
-    console.log(from);
+    this.transitionState = true;
+    this.displayPreviews = false;
     this.loadingPreviews = true;
-    console.log(to.params.pictureId);
-    this.$store.dispatch('FETCH_NEIGHBORS', to.params.pictureId).then(() => {
-      this.loadingPreviews = false;
-
-    });
-    next();
+    this.nextPictureUrl = 'http://192.168.2.119' + '/full/' + to.params.pictureId + '.jpg';
+    setTimeout(() => {
+      this.$store.dispatch('FETCH_NEIGHBORS', to.params.pictureId).then(() => {
+        this.displayPreviews = true;
+        setTimeout(() => { this.loadingPreviews = false; }, 300);
+        this.transitionState = false;
+      });
+      next();
+    }, 400);
   },
   beforeMount() {
     this.loading = true;
+    this.displayPreviews = false;
     this.loadingPreviews = true;
     this.$store.dispatch('FETCH_NEIGHBORS', this.$route.params.pictureId).then(() => {
-      this.loadingPreviews = false;
+      setTimeout(() => { this.loadingPreviews = false; }, 300);;
+      this.displayPreviews = true;
       this.loading = false;
     });
 
@@ -110,7 +143,7 @@ export default {
   bottom: 0;
   right: 0;
   left: 0;
-  background-color: black;
+background-color: #111;
 }
 
 .center {
@@ -123,4 +156,36 @@ export default {
   right: 30px;
   top: 20px;
 }
+
+
+.full-image-preview {
+  position:relative;
+  height: calc(100vh - 120px);
+  width:100vw;
+}
+
+.full-image-preview img {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  -webkit-transition: opacity 1s ease-in-out;
+  -moz-transition: opacity 1s ease-in-out;
+  -o-transition: opacity 1s ease-in-out;
+  transition: opacity 1s ease-in-out;
+  opacity:0;
+}
+
+.images-preview img {
+  -webkit-transition: opacity 2s ease-out;
+  -moz-transition: opacity 2s ease-out;
+  -o-transition: opacity 2s ease-out;
+  transition: opacity 2s ease-out;
+  opacity:0;
+}
+
+img.opaque {
+  opacity: 1!important;
+}
+
 </style>

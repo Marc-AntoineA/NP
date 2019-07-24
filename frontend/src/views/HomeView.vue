@@ -3,8 +3,10 @@
     <!-- <p-search-header/> -->
     <p-network id='network' :nodes='nodes' :edges='edges'
       @node-selection='onNodeSelection' @edge-selection='onEdgeSelection'
-      @node-double-selection='onNodeDoubleSelection' @edge-double-selection='onEdgeDoubleSelection'/>
-    <p-picture-tools @go-walk='goWalk()' @edit-image='editImage()' @random-image='randomImage()'/>
+      @node-double-selection='onNodeDoubleSelection' @edge-double-selection='onEdgeDoubleSelection'
+      @node-deselection='onNodeDeselection'/>
+    <p-picture-tools :displayed='displayed' :automatedMode='automatedMode'
+      @go-walk='goWalk()' @edit-image='editImage()' @random-image='randomImage()' @populate='populate()'/>
   </div>
 </template>
 
@@ -18,12 +20,24 @@ export default {
   name: 'Home',
   components: { PNetwork, PSearchHeader, PPictureTools },
   data: () => ({
-    selectedNode: undefined
+    selectedNode: undefined,
+    displayed: ['signout', 'help', 'stats', 'random', 'populate', 'clean'],
+    automatedMode: false
   }),
   methods: {
     onNodeSelection: function(imageId) {
       this.selectedNode = imageId
-      console.log('Selected node ', imageId);
+      this.displayed.push('edit');
+      this.displayed.push('walk');
+      this.displayed.push('share');
+    },
+    onNodeDeselection: function(nodeIds) {
+      if (nodeIds.length === 0) return;
+      if (nodeIds.indexOf(this.selectedNode) === -1) return;
+      this.selectedNode = '';
+      this.displayed.splice(this.displayed.indexOf('edit'), 1);
+      this.displayed.splice(this.displayed.indexOf('walk'), 1);
+      this.displayed.splice(this.displayed.indexOf('share'), 1);
     },
     onEdgeSelection: function(edgeId) {
       console.log('Selected edge ', edgeId);
@@ -43,7 +57,22 @@ export default {
       this.$router.push({ name: 'edit', params: { pictureId: this.selectedNode }});
     },
     randomImage: function() {
-      this.$store.dispatch('FETCH_RANDOM_PICTURE');
+      this.$store.dispatch('FETCH_RANDOM_PICTURE').then((node) => {
+        this.$store.dispatch('FETCH_NEIGHBORS', node.id);
+      });
+    },
+    populate: function() {
+      this.automatedMode = !this.automatedMode;
+      if (this.automatedMode)
+        this.startPopulate();
+    },
+    startPopulate: function() {
+      setTimeout(() => {
+        if (!this.automatedMode) return;
+        const lessConnectedNodeId = this.$store.getters.lessConnectedPictures;
+        this.$store.dispatch('FETCH_NEIGHBORS', lessConnectedNodeId);
+        this.startPopulate();
+      }, 200);
     }
   },
   computed: {
