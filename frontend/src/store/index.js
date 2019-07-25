@@ -15,6 +15,7 @@ export function createStore() {
       options: [],
       graph: {},
       user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : { usename: '', token: ''},
+      lessTaggedPictures: {},
     },
     actions,
     mutations,

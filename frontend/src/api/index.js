@@ -68,3 +68,11 @@ export function fetchWholeGraph() {
     token: '',
   }, 'get', 'no-cache');
 }
+
+export function fetchLessTaggedPictures() {
+  return request({
+    url: API_PATH + 'pictures/less-tagged/20',
+    data: undefined,
+    token: ''
+  }, 'get', 'no-cache');
+}

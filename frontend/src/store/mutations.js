@@ -38,5 +38,8 @@ export default {
     state.nodes = {};
     state.edges = {};
     state.tags = {};
+  },
+  SET_LESS_TAGGED_PICTURES: (state, pictures) => {
+    state.lessTaggedPictures = pictures;
   }
 }

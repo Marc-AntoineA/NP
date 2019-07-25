@@ -81,6 +81,7 @@ class AllTagsView(APIView):
         response = [tag.tag for tag in tags]
         return Response(response)
 
+
 class GetRandomPicture(APIView):
     def get(self, request, format=None):
         count = Picture.objects.count()
@@ -153,13 +154,16 @@ def delete_picture(request, picture_id):
     return HttpResponse('done')
 
 def list_picture_less_tags(request):
-    # todo. pour le moment, uniquement les photos sans tags
-    pictures = Picture.objects.annotate(count_tags=Count('tags'))
-    count_tags_min = pictures.aggregate(Min('count_tags'))['count_tags__min']
-    pictures = pictures.filter(count_tags=count_tags_min)
+
 
     response = ''
     for index, picture in enumerate(pictures):
         response += "<a href='http://localhost:8080/edit/{}' target='_blank'>Image {}</a><br/>".format(picture.id, index)
 
     return HttpResponse(response)
+
+class ListPicturesLessTags(APIView):
+    def get(self, request, nb_pictures, format=None):
+        pictures = Picture.objects.annotate(nb_tags=Count('tags')).order_by('nb_tags')
+        response = [{ 'id': picture.id, 'nb_tags': picture.nb_tags} for picture in pictures[:nb_pictures]]
+        return Response(response)

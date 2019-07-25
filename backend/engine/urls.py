@@ -10,7 +10,7 @@ urlpatterns = [
     path('picture/delete/<str:picture_id>', views.delete_picture),
     path('tags', views.AllTagsView.as_view()),
     path('tags/<str:picture_id>', views.TagsView.as_view()),
-    path('pictures/moins-tags', views.list_picture_less_tags),
+    path('pictures/less-tagged/<int:nb_pictures>', views.ListPicturesLessTags.as_view()),
     path('pictures/random', views.GetRandomPicture.as_view())
 ]
 

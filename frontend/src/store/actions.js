@@ -4,7 +4,8 @@ import {
   postTagsForPictureId,
   fetchAllTags,
   fetchRandomPicture,
-  fetchWholeGraph
+  fetchWholeGraph,
+  fetchLessTaggedPictures
  } from '../api';
 
 export default {
@@ -129,5 +130,17 @@ export default {
       commit('RESET_GRAPH')
       resolve();
     });
-  }
+  },
+  FETCH_LESS_TAGGED_PICTURES: ({ commit, state, dispatch }) => {
+    return new Promise((resolve, reject) => {
+      fetchLessTaggedPictures()
+      .then((pictures) => {
+        commit('SET_LESS_TAGGED_PICTURES', pictures);
+        resolve();
+      }).catch(({ code, error }) => {
+        if (code == 401) dispatch('LOGOUT');
+        reject(error);
+      });
+    });
+  },
 }
