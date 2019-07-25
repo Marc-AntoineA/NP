@@ -15,8 +15,8 @@
     </div>
 
     <p-picture-tools :displayed="['home', 'random', 'populate', 'edit', 'help', 'stats', 'home', 'share', 'signout']"
-      :automatedMode='automatedMode'
-      @random-image='loadRandomImage()' @populate='handleRandomWalk()' @edit-image='editImage()'/>
+      :populationDelay='10000'
+      @random-image='loadRandomImage()' @populate='randomWalk()' @edit-image='editImage()'/>
   </div>
 </template>
 
@@ -34,7 +34,6 @@ export default {
   data: () => ({
     loading: true,
     loadingPreviews: true,
-    automatedMode: false,
     nextPictureUrl: '',
     transitionState: false,
     displayPreviews: false
@@ -64,19 +63,10 @@ export default {
         this.$router.push({ name: 'walk', params: { pictureId: pictureId }});
       });
     },
-    handleRandomWalk() {
-      this.automatedMode = !this.automatedMode;
-      if (this.automatedMode) this.randomWalk();
-    },
     randomWalk() {
-      setTimeout(() => {
-        console.log(this.automatedMode);
-        if (!this.automatedMode) return;
-        const randomPictureIndex = Math.floor(Math.random()*this.neighbors.length);
-        const nodeId = this.neighbors[randomPictureIndex];
-          this.$router.push({ name: 'walk', params: { pictureId: nodeId }});
-        this.randomWalk();
-      }, 10000);
+      const randomPictureIndex = Math.floor(Math.random()*this.neighbors.length);
+      const nodeId = this.neighbors[randomPictureIndex];
+      this.$router.push({ name: 'walk', params: { pictureId: nodeId }});
     },
     selectPicture(pictureId) {
       this.$router.push({ name: 'walk', params: { pictureId }});
@@ -93,18 +83,18 @@ export default {
     setTimeout(() => {
       this.$store.dispatch('FETCH_NEIGHBORS', to.params.pictureId).then(() => {
         this.displayPreviews = true;
-        setTimeout(() => { this.loadingPreviews = false; }, 300);
+        setTimeout(() => { this.loadingPreviews = false; }, 150);
         this.transitionState = false;
       });
       next();
-    }, 400);
+    }, 200);
   },
   beforeMount() {
     this.loading = true;
     this.displayPreviews = false;
     this.loadingPreviews = true;
     this.$store.dispatch('FETCH_NEIGHBORS', this.$route.params.pictureId).then(() => {
-      setTimeout(() => { this.loadingPreviews = false; }, 300);;
+      setTimeout(() => { this.loadingPreviews = false; }, 150);;
       this.displayPreviews = true;
       this.loading = false;
     });
@@ -143,7 +133,7 @@ export default {
   bottom: 0;
   right: 0;
   left: 0;
-background-color: #111;
+  background-color: #111;
 }
 
 .center {

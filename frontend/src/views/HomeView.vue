@@ -5,7 +5,7 @@
       @node-selection='onNodeSelection' @edge-selection='onEdgeSelection'
       @node-double-selection='onNodeDoubleSelection' @edge-double-selection='onEdgeDoubleSelection'
       @node-deselection='onNodeDeselection'/>
-    <p-picture-tools :displayed='displayed' :automatedMode='automatedMode'
+    <p-picture-tools :displayed='displayed' :populationDelay='5000'
       @go-walk='goWalk()' @edit-image='editImage()' @random-image='randomImage()' @populate='populate()'/>
   </div>
 </template>
@@ -21,8 +21,7 @@ export default {
   components: { PNetwork, PSearchHeader, PPictureTools },
   data: () => ({
     selectedNode: undefined,
-    displayed: ['signout', 'help', 'stats', 'random', 'populate', 'clean'],
-    automatedMode: false
+    displayed: ['signout', 'help', 'stats', 'random', 'populate', 'clean']
   }),
   methods: {
     onNodeSelection: function(imageId) {
@@ -62,17 +61,8 @@ export default {
       });
     },
     populate: function() {
-      this.automatedMode = !this.automatedMode;
-      if (this.automatedMode)
-        this.startPopulate();
-    },
-    startPopulate: function() {
-      setTimeout(() => {
-        if (!this.automatedMode) return;
-        const lessConnectedNodeId = this.$store.getters.lessConnectedPictures;
-        this.$store.dispatch('FETCH_NEIGHBORS', lessConnectedNodeId);
-        this.startPopulate();
-      }, 200);
+      const lessConnectedNodeId = this.$store.getters.lessConnectedPictures;
+      this.$store.dispatch('FETCH_NEIGHBORS', lessConnectedNodeId);
     }
   },
   computed: {

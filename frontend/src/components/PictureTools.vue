@@ -1,38 +1,41 @@
 <template>
-  <div class='bottom-fixed-navbar'>
-    <ul class='tools-list'>
-      <li v-if='displayed.indexOf("home") !== -1' class='tool-button tooltip' title="Retourner au graphe">
-        <button @click='goHome()'><font-awesome-icon size='2x' icon="home"/></button>
-      </li>
-      <li v-if='displayed.indexOf("signout") !== -1' class='tool-button tooltip' title="Se deconnecter">
-        <button @click='signOut()'><font-awesome-icon size='2x' icon="sign-out-alt"/></button>
-      </li>
-      <li v-if='displayed.indexOf("populate") !== -1' class='tool-button tooltip' v-bind:class="{ 'automated-mode': automatedMode }"
-       title="Peupler le graphe automatiquement">
-        <button @click='populate()'><font-awesome-icon size='2x' icon="robot"/></button>
-      </li>
-      <li v-if='displayed.indexOf("random") !== -1' class='tool-button tooltip' title="Charger une image aléatoirement">
-        <button @click='randomImage()'><font-awesome-icon size='2x' icon="dice"/></button>
-      </li>
-      <li v-if='displayed.indexOf("clean") !== -1' class='tool-button tooltip' title="Nettoyer le graphe">
-        <button @click='clean()'><font-awesome-icon size='2x' icon="broom"/></button>
-      </li>
-      <li v-if='displayed.indexOf("edit") !== -1' class='tool-button tooltip' title="Modifier les tags de cette image">
-        <button @click='editImage()'><font-awesome-icon size='2x' icon="edit"/></button>
-      </li>
-      <li v-if='displayed.indexOf("walk") !== -1' class='tool-button tooltip' title="Ouvrir la marche aléatoire">
-        <button @click='goWalk()'><font-awesome-icon size='2x' icon="hiking"/></button>
-      </li>
-      <li v-if='displayed.indexOf("share") !== -1' class='tool-button tooltip' title="Partager cette photo">
-        <button @click='shareImage()'><font-awesome-icon size='2x' icon="share-alt"/></button>
-      </li>
-      <li v-if='displayed.indexOf("help") !== -1' class='tool-button tooltip' title="Une interrogation ?">
-        <button @click='showHelp()'><font-awesome-icon size='2x' icon="question"/></button>
-      </li>
-      <li v-if='displayed.indexOf("stats") !== -1' class='tool-button tooltip' title="Quelques statistiques">
-        <button @click='goStatistics()'><font-awesome-icon size='2x' icon="info"/></button>
-      </li>
-    </ul>
+  <div>
+    <div class='bottom-fixed-navbar'>
+      <ul class='tools-list'>
+        <li v-if='displayed.indexOf("home") !== -1' class='tool-button tooltip' title="Retourner au graphe">
+          <button @click='goHome()'><font-awesome-icon size='2x' icon="home"/></button>
+        </li>
+        <li v-if='displayed.indexOf("signout") !== -1' class='tool-button tooltip' title="Se deconnecter">
+          <button @click='signOut()'><font-awesome-icon size='2x' icon="sign-out-alt"/></button>
+        </li>
+        <li v-if='displayed.indexOf("populate") !== -1' class='tool-button tooltip' v-bind:class="{ 'automated-mode': automatedMode }"
+         title="Peupler le graphe automatiquement">
+          <button @click='handlePopulate()'><font-awesome-icon size='2x' icon="robot"/></button>
+        </li>
+        <li v-if='displayed.indexOf("random") !== -1' class='tool-button tooltip' title="Charger une image aléatoirement">
+          <button @click='randomImage()'><font-awesome-icon size='2x' icon="dice"/></button>
+        </li>
+        <li v-if='displayed.indexOf("clean") !== -1' class='tool-button tooltip' title="Nettoyer le graphe">
+          <button @click='clean()'><font-awesome-icon size='2x' icon="broom"/></button>
+        </li>
+        <li v-if='displayed.indexOf("edit") !== -1' class='tool-button tooltip' title="Modifier les tags de cette image">
+          <button @click='editImage()'><font-awesome-icon size='2x' icon="edit"/></button>
+        </li>
+        <li v-if='displayed.indexOf("walk") !== -1' class='tool-button tooltip' title="Ouvrir la marche aléatoire">
+          <button @click='goWalk()'><font-awesome-icon size='2x' icon="hiking"/></button>
+        </li>
+        <li v-if='displayed.indexOf("share") !== -1' class='tool-button tooltip' title="Partager cette photo">
+          <button @click='shareImage()'><font-awesome-icon size='2x' icon="share-alt"/></button>
+        </li>
+        <li v-if='displayed.indexOf("help") !== -1' class='tool-button tooltip' title="Une interrogation ?">
+          <button @click='showHelp()'><font-awesome-icon size='2x' icon="question"/></button>
+        </li>
+        <li v-if='displayed.indexOf("stats") !== -1' class='tool-button tooltip' title="Quelques statistiques">
+          <button @click='goStatistics()'><font-awesome-icon size='2x' icon="info"/></button>
+        </li>
+      </ul>
+    </div>
+    <div class='progress-bar' :style='"width:" + this.automatedProgress + "%"'/>
   </div>
 </template>
 
@@ -42,11 +45,15 @@ export default {
   name: 'p-picture-tools',
   props: {
     displayed: Array,
-    automatedMode: {
-      type: Boolean,
-      default: false,
+    populationDelay: {
+      type: Number,
+      default: 5000
     }
   },
+  data: () => ({
+    automatedMode: false,
+    automatedProgress: 0
+  }),
   methods: {
     goHome: function() {
       this.$router.push({ name: 'home' });
@@ -69,8 +76,29 @@ export default {
     editImage: function() {
       this.$emit('edit-image');
     },
+    handlePopulate: function() {
+      this.automatedMode = !this.automatedMode;
+      if (this.automatedMode)
+        this.populate();
+      else
+        this.automatedProgress = 0;
+    },
     populate: function() {
-      this.$emit('populate');
+      this.automatedProgress = 1;
+      this.incrProgress();
+      setTimeout(() => {
+        if (!this.automatedMode) return;
+        this.$emit('populate');
+        this.populate();
+      }, this.populationDelay);
+    },
+    incrProgress: function() {
+      if (this.automatedProgress === 0) return;
+      if (this.automatedProgress >= 98) return;
+      this.automatedProgress += 1;
+      setTimeout(() => {
+        this.incrProgress();
+      }, this.populationDelay/100.);
     },
     randomImage: function() {
       this.$emit('random-image');
@@ -155,6 +183,17 @@ button {
 
 .automated-mode path {
   color: blue;
+}
+
+.progress-bar {
+  height: 4px;
+  background-color: white;
+  margin: auto;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-radius: 3px;
 }
 
 </style>
