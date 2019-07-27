@@ -88,7 +88,7 @@ export default {
     return new Promise((resolve, reject) => {
       fetchRandomPicture()
       .then((picture) => {
-        const node = { id: picture.id, shape: 'image', image: 'http://localhost/thumbnails/' + picture.id + '.jpg', size: '35', color: '#fefefe'};
+        const node = { id: picture.id, shape: 'image', image: 'http://192.168.2.119/thumbnails/' + picture.id + '.jpg', size: '35', color: '#fefefe'};
         commit('SET_NODES', { nodes: [node] });
         resolve(node);
       }).catch(({ code, error }) => {

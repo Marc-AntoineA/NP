@@ -2,6 +2,7 @@ from .models import *
 from django.db.models import Count, Min, Max
 from random import random
 import numpy as np
+import time
 
 def compute_distances_to(picture_id, frequencies=None):
     if frequencies is None:
@@ -11,19 +12,31 @@ def compute_distances_to(picture_id, frequencies=None):
 
     distances = {}
     pictures = Picture.objects.all()
+    start = time.time()
 
+    nb_0 = 0
+    time_0 = 0
     for picture in pictures:
+
+        start_int = time.time()
         if str(picture.id) == picture_id:
             distances[str(picture_id)] = 0
             continue
-
         common_tags = main_tags.intersection(picture.tags.all())
         dist = 0
         for tag in common_tags:
             freq = frequencies.get(tag=tag.tag).count
             dist += 1./freq + 0.1*random()
-
+        end_int = time.time()
+        if dist < 0.3:
+            print(common_tags)
+            nb_0 += 1
+            time_0 += end_int - start_int
+        # print('{} int {}'.format(dist, end_int - start_int))
         distances[str(picture.id)] = dist
+    end = time.time()
+    print('compute distances to : {} ms'.format(end - start))
+    print('nb0 {}, time0 {}'.format(nb_0, time_0))
     return distances
 
 def get_neighbors_from_distances(distances, nb_neighbors=5):

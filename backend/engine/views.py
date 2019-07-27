@@ -39,7 +39,7 @@ class AllNeighborsOfNode(APIView):
 
     # todo optim l'algo
     def get(self, request, picture_id, format=None):
-        if has_to_be_computed_again(picture_id):
+        if True:#has_to_be_computed_again(picture_id):
             compute_neighbors_to(picture_id)
 
         neighbors = Neighbors.objects.get(from_picture__id=picture_id).to_pictures.all()

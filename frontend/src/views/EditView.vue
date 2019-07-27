@@ -40,7 +40,7 @@ export default {
       return this.$route.params.pictureId;
     },
     pictureFullUrl() {
-      return 'http://localhost' + '/full/' + this.pictureId + '.jpg';
+      return 'http://192.168.2.119/' + '/full/' + this.pictureId + '.jpg';
     },
     tags() {
       return this.$store.state.tags[this.pictureId];

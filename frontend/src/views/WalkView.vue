@@ -8,7 +8,7 @@
       </div>
       <ul class='images-preview'>
         <li v-if='displayPreviews' v-for='neighborId in neighbors'>
-          <img class='image-thumbnail' :src='"http://localhost/thumbnails/" + neighborId + ".jpg"'
+          <img class='image-thumbnail' :src='"http://192.168.2.119/thumbnails/" + neighborId + ".jpg"'
             @click='selectPicture(neighborId)' :class='{opaque: !loadingPreviews }'/>
         </li>
       </ul>
