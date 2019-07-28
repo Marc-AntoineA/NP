@@ -5,6 +5,9 @@
       @node-selection='onNodeSelection' @edge-selection='onEdgeSelection'
       @node-double-selection='onNodeDoubleSelection' @edge-double-selection='onEdgeDoubleSelection'
       @node-deselection='onNodeDeselection'/>
+    <ul class='displayed-tags'>
+      <li v-for='tag in currentTags'>{{ tag }}</li>
+    </ul>
     <p-picture-tools :displayed='displayed' :populationDelay='5000'
       @go-walk='goWalk()' @edit-image='editImage()' @random-image='randomImage()' @populate='populate()'/>
   </div>
@@ -71,6 +74,11 @@ export default {
     },
     edges: function() {
       return Object.values(this.$store.state.edges);
+    },
+    currentTags: function() {
+      if (!this.selectedNode) return [];
+      console.log(this.$store.state.tags[this.selectedNode]);
+      return this.$store.state.tags[this.selectedNode];
     }
   },
   beforeMount() {
@@ -84,6 +92,23 @@ export default {
 #network {
   height: 100vh;
   background-color: #111;
+}
+
+.displayed-tags {
+	list-style: none;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+  background-color: #666;
+  opacity: 0.8;
+}
+
+.displayed-tags li {
+	display: inline-block;
+	padding: 5px;
+	color: #ddd;
 }
 
 </style>

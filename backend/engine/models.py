@@ -31,8 +31,9 @@ class Picture(models.Model):
 
 class Neighbors(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
-    from_picture = models.OneToOneField(Picture, blank=False, null=True, on_delete=models.CASCADE, related_name='from_picture')
-    to_pictures = models.ManyToManyField(Picture, blank=True, null=True, related_name='to_pictures')
+    from_picture = models.ForeignKey(Picture, on_delete=models.CASCADE, related_name='from_picture')
+    to_picture = models.ForeignKey(Picture, on_delete=models.CASCADE, related_name='to_picture')
+    distance = models.FloatField(default=0)
 
     def __str__(self):
         return 'Neigbors of {}'.format(self.from_picture_id)
