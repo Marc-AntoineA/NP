@@ -1,6 +1,5 @@
 from django.db import models
 import uuid
-import unidecode
 
 class Tag(models.Model):
     """

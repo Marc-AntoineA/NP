@@ -104,4 +104,3 @@ def compute_matrix():
         tmp = ['1' if tag in picture__tags else '0' for tag in tags]
         matrix.append(tmp)
         file.write(','.join(tmp) + '\n')
-compute_matrix()

@@ -2,4 +2,6 @@ matplotlib
 numpy
 django
 django-rest-framework
-paramiko
+django-cors-headers
+mysqlclient
+Pillow
