@@ -29,10 +29,8 @@ export default {
           dispatch('REFRESH_TOKEN').then(() => {
             dispatch('FETCH_NEIGHBORS', pictureId)
             .then((edges) => {
-              console.log('resolve edges');
               resolve(edges);
             }).catch(({ error }) => {
-              console.log('reject error');
               reject(error)
             });
           });

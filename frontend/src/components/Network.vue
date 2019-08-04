@@ -45,9 +45,7 @@ export default {
       if (Array.isArray(value)) {
         const newIds = new DataSet(value).getIds();
         const diff = arrayDiff(this.graphDataSet.edges.getIds(), newIds);
-        console.log(diff);
         this.graphDataSet.edges.update(value);
-        console.log(this.graphDataSet);
         this.graphDataSet.edges.remove(diff);
       }
     };

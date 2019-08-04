@@ -42,15 +42,11 @@ export default {
       this.displayed.splice(this.displayed.indexOf('share'), 1);
     },
     onEdgeSelection: function(edgeId) {
-      console.log('Selected edge ', edgeId);
     },
     onNodeDoubleSelection: function(imageId) {
-      console.log('Db clicked on ', imageId);
       this.$store.dispatch('FETCH_NEIGHBORS', imageId);
-      console.log(this.$store.getters.TAGS_NETWORK);
     },
     onEdgeDoubleSelection: function(edgeId) {
-      console.log('Db clicked on ', edgeId);
     },
     goWalk: function() {
       this.$router.push({ name: 'walk', params: { pictureId: this.selectedNode }});
@@ -77,7 +73,6 @@ export default {
     },
     currentTags: function() {
       if (!this.selectedNode) return [];
-      console.log(this.$store.state.tags[this.selectedNode]);
       return this.$store.state.tags[this.selectedNode];
     }
   },

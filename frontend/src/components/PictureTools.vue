@@ -3,35 +3,35 @@
     <div class='bottom-fixed-navbar'>
       <ul class='tools-list'>
         <li v-if='displayed.indexOf("home") !== -1' class='tool-button tooltip' title="Retourner au graphe">
-          <button @click='goHome()'><font-awesome-icon size='2x' icon="home"/></button>
+          <button @click='goHome()'><font-awesome-icon class='icon-tool' size='2x' icon="home"/></button>
         </li>
         <li v-if='displayed.indexOf("signout") !== -1' class='tool-button tooltip' title="Se deconnecter">
-          <button @click='signOut()'><font-awesome-icon size='2x' icon="sign-out-alt"/></button>
+          <button @click='signOut()'><font-awesome-icon class='icon-tool' size='2x' icon="sign-out-alt"/></button>
         </li>
         <li v-if='displayed.indexOf("populate") !== -1' class='tool-button tooltip' v-bind:class="{ 'automated-mode': automatedMode }"
          title="Peupler le graphe automatiquement">
-          <button @click='handlePopulate()'><font-awesome-icon size='2x' icon="robot"/></button>
+          <button @click='handlePopulate()'><font-awesome-icon class='icon-tool' size='2x' icon="robot"/></button>
         </li>
         <li v-if='displayed.indexOf("random") !== -1' class='tool-button tooltip' title="Charger une image aléatoirement">
-          <button @click='randomImage()'><font-awesome-icon size='2x' icon="dice"/></button>
+          <button @click='randomImage()'><font-awesome-icon class='icon-tool' size='2x' icon="dice"/></button>
         </li>
         <li v-if='displayed.indexOf("clean") !== -1' class='tool-button tooltip' title="Nettoyer le graphe">
-          <button @click='clean()'><font-awesome-icon size='2x' icon="broom"/></button>
+          <button @click='clean()'><font-awesome-icon class='icon-tool' size='2x' icon="broom"/></button>
         </li>
         <li v-if='displayed.indexOf("edit") !== -1' class='tool-button tooltip' title="Modifier les tags de cette image">
-          <button @click='editImage()'><font-awesome-icon size='2x' icon="edit"/></button>
+          <button @click='editImage()'><font-awesome-icon class='icon-tool' size='2x' icon="edit"/></button>
         </li>
         <li v-if='displayed.indexOf("walk") !== -1' class='tool-button tooltip' title="Ouvrir la marche aléatoire">
-          <button @click='goWalk()'><font-awesome-icon size='2x' icon="hiking"/></button>
+          <button @click='goWalk()'><font-awesome-icon class='icon-tool' size='2x' icon="hiking"/></button>
         </li>
         <li v-if='displayed.indexOf("share") !== -1' class='tool-button tooltip' title="Partager cette photo">
-          <button @click='shareImage()'><font-awesome-icon size='2x' icon="share-alt"/></button>
+          <button @click='shareImage()'><font-awesome-icon class='icon-tool' size='2x' icon="share-alt"/></button>
         </li>
         <li v-if='displayed.indexOf("help") !== -1' class='tool-button tooltip' title="Une interrogation ?">
-          <button @click='showHelp()'><font-awesome-icon size='2x' icon="question"/></button>
+          <button @click='showHelp()'><font-awesome-icon class='icon-tool' size='2x' icon="question"/></button>
         </li>
         <li v-if='displayed.indexOf("stats") !== -1' class='tool-button tooltip' title="Quelques statistiques">
-          <button @click='goStatistics()'><font-awesome-icon size='2x' icon="info"/></button>
+          <button @click='goStatistics()'><font-awesome-icon class='icon-tool' size='2x' icon="info"/></button>
         </li>
       </ul>
     </div>
@@ -68,7 +68,7 @@ export default {
       this.$router.push({ name: 'analyze' });
     },
     showHelp: function() {
-      this.emit('help');
+      this.$emit('help');
     },
     shareImage: function() {
       this.$emit('share-image');
@@ -117,9 +117,8 @@ export default {
 <style scoped>
 .bottom-fixed-navbar{
   position: fixed;
-  bottom: 15px;
+  bottom: 40px;
   right: 15px;
-  /* width: 100%; */
   overflow: hidden;
   z-index: 1;
 }
@@ -181,8 +180,16 @@ button {
 	z-index: 99;
 }
 
-.automated-mode path {
-  color: blue;
+.automated-mode .icon-tool{
+  animation: ani 4s linear infinite;
+}
+
+@keyframes ani {
+  0% { transform: rotate(0); }
+  25% { transform: rotate(-90deg); }
+  50% { transform: rotate(-180deg); }
+  75% { transform: rotate(-270deg); }
+  100% { transform: rotate(-360deg); }
 }
 
 .progress-bar {
@@ -196,4 +203,12 @@ button {
   border-radius: 3px;
 }
 
+.icon-tool:hover {
+  transform: scale(1.3) rotate(-30deg);;
+}
+
+.icon-tool {
+  -webkit-transition: transform 0.6s; /* For Safari 3.1 to 6.0 */
+  transition: transform 0.6s;
+}
 </style>

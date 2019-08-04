@@ -53,7 +53,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$store.getters.isLoggedIn);
     if (!this.$store.getters.isLoggedIn) return;
     this.$store.dispatch('LOGOUT').then(() => {
       this.infoText.text = "Vous êtes désormais déconnecté.";
