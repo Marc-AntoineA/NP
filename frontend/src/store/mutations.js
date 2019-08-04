@@ -30,6 +30,9 @@ export default {
     Vue.set(state.user, 'username', username);
     Vue.set(state.user, 'token', token);
   },
+  SET_ACCESS_TOKEN: (state, access) => {
+    Vue.set(state.user.token, 'access', access);
+  },
   REMOVE_USER: (state) => {
     Vue.set(state.user, 'username', '');
     Vue.set(state.user, 'token', '');

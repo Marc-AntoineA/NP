@@ -32,7 +32,6 @@ def compute_distances_to(picture_id, frequencies=None):
             nb_tags += 1
         end_int = time.time()
         if dist < 0.3:
-            print(common_tags)
             nb_0 += 1
             time_0 += end_int - start_int
         # print('{} int {}'.format(dist, end_int - start_int))
@@ -79,7 +78,6 @@ def get_random_neighbors(picture_id, nb_neighbors=5):
     n = len(sum_cum_distances)
     while len(selected_neighbors) < nb_neighbors:
         random_number = random()*sum_cum_distances[-1]
-        print(selected_neighbors)
         for index in range(0, n - 1):
             if sum_cum_distances[index] < random_number < sum_cum_distances[index + 1]:
                 id = str(neighbors[index].to_picture.id)

@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseForbidden
 from rest_framework.renderers import TemplateHTMLRenderer
 from django.db.models import F
 from django.db import IntegrityError
@@ -12,6 +12,7 @@ from django.http import HttpResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Count, Min
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 import hashlib
 from .models import *
@@ -39,6 +40,7 @@ class AllNeighborsOfNode(APIView):
 
     # todo optim l'algo
     def get(self, request, picture_id, format=None):
+        print(request.user)
         if True:#has_to_be_computed_again(picture_id):
             compute_neighbors_to(picture_id)
 
@@ -99,7 +101,6 @@ def test_upload_picture(request):
 
     picture_image = request.FILES['picture']
     hash = hashlib.sha224(picture_image.read()).hexdigest()
-    print(hash)
 
     # todo check format (jpg only)
     picture = Picture(hash=hash)
@@ -153,14 +154,6 @@ def delete_picture(request, picture_id):
     Picture.objects.get(id=picture_id).delete()
     return HttpResponse('done')
 
-def list_picture_less_tags(request):
-
-
-    response = ''
-    for index, picture in enumerate(pictures):
-        response += "<a href='http://localhost:8080/edit/{}' target='_blank'>Image {}</a><br/>".format(picture.id, index)
-
-    return HttpResponse(response)
 
 class ListPicturesLessTags(APIView):
     def get(self, request, nb_pictures, format=None):
@@ -168,10 +161,16 @@ class ListPicturesLessTags(APIView):
         response = [{ 'id': picture.id, 'nb_tags': picture.nb_tags} for picture in pictures[:nb_pictures]]
         return Response(response)
 
-from random import random
-def preview_picture(request, type, picture_id):
-    # if random() > 0.5:
-    #     return HttpResponse('401 Unauthorized', status=401)
-    response = HttpResponse(content_type='image/jpg')
-    response['X-Sendfile'] = '/var/www/static.phographe.marc-antoinea.fr/{}/{}.jpg'.format(type, picture_id)
-    return response
+def preview_private_picture(request, type, picture_id):
+    try:
+        token = request.GET.get('access_token')
+        jWTAuthentication = JWTAuthentication()
+        validated_token = jWTAuthentication.get_validated_token(raw_token=token)
+        user = jWTAuthentication.get_user(validated_token=validated_token)
+
+        picture = Picture.objects.get(id=picture_id)
+        response = HttpResponse(content_type='image/jpg')
+        response['X-Sendfile'] = '/var/www/static.phographe.marc-antoinea.fr/{}/{}.jpg'.format(type, picture_id)
+        return response
+    except:
+        return HttpResponseForbidden()

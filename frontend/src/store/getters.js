@@ -28,9 +28,9 @@ export default {
     return undefined;
   },
   fullUrl: (state, getters) => (pictureId) => {
-    return state.config.staticUrl + 'full/' + pictureId;
+    return state.config.staticUrl + 'full/' + pictureId + '?access_token=' + state.user.token.access;
   },
   thumbnailUrl: (state, getters) => (pictureId) => {
-    return state.config.staticUrl + 'thumbnail/' + pictureId;
+    return state.config.staticUrl + 'thumbnail/' + pictureId + '?access_token=' + state.user.token.access;
   }
 }

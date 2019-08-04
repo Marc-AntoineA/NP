@@ -5,3 +5,4 @@ django-rest-framework
 django-cors-headers
 mysqlclient
 Pillow
+djangorestframework_simplejwt
