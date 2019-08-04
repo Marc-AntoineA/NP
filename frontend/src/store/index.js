@@ -6,6 +6,8 @@ import mutations from './mutations';
 
 Vue.use(Vuex);
 
+const settings = require('../settings.json');
+
 export function createStore() {
   return new Vuex.Store({
     state: {
@@ -16,6 +18,10 @@ export function createStore() {
       graph: {},
       user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : { usename: '', token: ''},
       lessTaggedPictures: {},
+      config: {
+        backendUrl: settings.BACKEND_URL,
+        staticUrl: settings.STATIC_URL
+      }
     },
     actions,
     mutations,

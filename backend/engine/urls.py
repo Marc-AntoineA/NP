@@ -1,4 +1,4 @@
-from django.urls import path, include, register_converter
+from django.urls import path, include, register_converter, re_path
 from engine import views
 from rest_framework.urlpatterns import format_suffix_patterns
 
@@ -11,7 +11,8 @@ urlpatterns = [
     path('tags', views.AllTagsView.as_view()),
     path('tags/<str:picture_id>', views.TagsView.as_view()),
     path('pictures/less-tagged/<int:nb_pictures>', views.ListPicturesLessTags.as_view()),
-    path('pictures/random', views.GetRandomPicture.as_view())
+    path('pictures/random', views.GetRandomPicture.as_view()),
+    re_path(r'^static/(?P<type>full|thumbnail)/(?P<picture_id>[\w-]+)/$', views.preview_picture)
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

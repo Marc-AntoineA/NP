@@ -5,13 +5,13 @@
       :options='options' :multiple='true' :taggable='true' @tag='addTag'
       :hide-selected='true' :options-limit='5' @input='updateTags'
        />
-      <img class='image-full' :src='pictureFullUrl'/>
+      <img class='image-full' :src='$store.getters.fullUrl(pictureId)'/>
     </div>
     <div class='gallery'>
       <button @click='loadLessTaggedPictures()'>Charger des images peu taggées</button>
       <ul>
         <li v-for='picture in lessTaggedPictures'>
-          <img :src='"http://192.168.2.119/thumbnails/" + picture.id + ".jpg"'
+          <img :src='$store.getters.thumbnailUrl(picture.id)'
             @click='changePicture(picture.id)'/>
         </li>
       </ul>
@@ -38,9 +38,6 @@ export default {
   computed: {
     pictureId() {
       return this.$route.params.pictureId;
-    },
-    pictureFullUrl() {
-      return 'http://192.168.2.119/' + '/full/' + this.pictureId + '.jpg';
     },
     tags() {
       return this.$store.state.tags[this.pictureId];

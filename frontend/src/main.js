@@ -15,7 +15,6 @@ library.add(faBroom);
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
-
 export function createApp() {
   const router = createRouter();
   const store = createStore();

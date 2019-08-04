@@ -19,7 +19,8 @@ function request({ url, data, token }, method, cache) {
   });
 }
 
-const API_PATH = 'http://192.168.2.119:8000/';
+const API_PATH = require('../settings.json').BACKEND_URL;
+console.log(API_PATH);
 
 export function fetchNeigborsForPictureId(pictureId) {
   return request({

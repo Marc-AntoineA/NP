@@ -14,9 +14,9 @@
     <button @click='computeInJs'>Compute Size in js</button>
     <ul>
       <li v-for='(picture, index) in picturesFrequencies'>
-        {{ index }} --- 
+        {{ index }} ---
         <span>{{ picture.nbTimes }}</span>
-        <img :src='"http://192.168.2.119/thumbnails/" + picture.id + ".jpg"'/>
+        <img :src='$store.getters.thumbnailUrl(picture.id)'/>
         <a :href='"/walk/" + picture.id' target='_blank'>Walk</a>
       </li>
     </ul>

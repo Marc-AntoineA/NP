@@ -167,3 +167,11 @@ class ListPicturesLessTags(APIView):
         pictures = Picture.objects.annotate(nb_tags=Count('tags')).order_by('nb_tags')
         response = [{ 'id': picture.id, 'nb_tags': picture.nb_tags} for picture in pictures[:nb_pictures]]
         return Response(response)
+
+from random import random
+def preview_picture(request, type, picture_id):
+    # if random() > 0.5:
+    #     return HttpResponse('401 Unauthorized', status=401)
+    response = HttpResponse(content_type='image/jpg')
+    response['X-Sendfile'] = '/var/www/static.phographe.marc-antoinea.fr/{}/{}.jpg'.format(type, picture_id)
+    return response

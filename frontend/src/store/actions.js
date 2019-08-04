@@ -9,7 +9,7 @@ import {
  } from '../api';
 
 export default {
-  FETCH_NEIGHBORS: ( { commit,  state, dispatch }, pictureId) => {
+  FETCH_NEIGHBORS: ( { commit,  state, dispatch, getters }, pictureId) => {
     return new Promise((resolve, reject) => {
       fetchNeigborsForPictureId(pictureId).then((edges) => {
 
@@ -20,7 +20,7 @@ export default {
 
           commit('SET_NODES', {
             nodes: [
-              { id: newPictureId, shape: 'image', image: 'http://192.168.2.119/thumbnails/' + newPictureId + '.jpg', size:'35', color:'#fefefe' }
+              { id: newPictureId, shape: 'image', image: getters.thumbnailUrl(newPictureId), size:'35', color:'#fefefe' }
             ]
           });
 
@@ -84,13 +84,13 @@ export default {
       });
     });
   },
-  FETCH_RANDOM_PICTURE: ({ commit, state, dispatch }) => {
+  FETCH_RANDOM_PICTURE: ({ commit, state, dispatch, getters }) => {
     return new Promise((resolve, reject) => {
       fetchRandomPicture()
       .then((picture) => {
         const tags = picture.tags;
         commit('SET_TAGS', { pictureId: picture.id, tags: tags });
-        const node = { id: picture.id, shape: 'image', image: 'http://192.168.2.119/thumbnails/' + picture.id + '.jpg', size: '35', color: '#fefefe'};
+        const node = { id: picture.id, shape: 'image', image: getters.thumbnailUrl(picture.id) , size: '35', color: '#fefefe'};
         commit('SET_NODES', { nodes: [node] });
         resolve(node);
       }).catch(({ code, error }) => {

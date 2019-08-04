@@ -26,5 +26,11 @@ export default {
         return nodeId;
     }
     return undefined;
+  },
+  fullUrl: (state, getters) => (pictureId) => {
+    return state.config.staticUrl + 'full/' + pictureId;
+  },
+  thumbnailUrl: (state, getters) => (pictureId) => {
+    return state.config.staticUrl + 'thumbnail/' + pictureId;
   }
 }

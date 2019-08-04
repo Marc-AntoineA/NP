@@ -3,12 +3,12 @@
     <p-spinner class='center' :show="loading"></p-spinner>
     <div v-if='!loading' class='picture-view'>
       <div class='full-image-preview'>
-        <img class='image-full' :class='{opaque: !transitionState }' :src='pictureFullUrl'/>
+        <img class='image-full' :class='{opaque: !transitionState }' :src='$store.getters.fullUrl(pictureId)'/>
         <img class='image-full' :class='{opaque: transitionState }' :src='nextPictureUrl'/>
       </div>
       <ul class='images-preview'>
         <li v-if='displayPreviews' v-for='neighborId in neighbors'>
-          <img class='image-thumbnail' :src='"http://192.168.2.119/thumbnails/" + neighborId + ".jpg"'
+          <img class='image-thumbnail' :src='$store.getters.thumbnailUrl(neighborId)'
             @click='selectPicture(neighborId)' :class='{opaque: !loadingPreviews }'/>
         </li>
       </ul>
@@ -42,14 +42,10 @@ export default {
     pictureId() {
       return this.$route.params.pictureId;
     },
-    pictureFullUrl() {
-      return 'http://192.168.2.119' + '/full/' + this.pictureId + '.jpg';
-    },
     tags() {
       return this.$store.state.tags[this.pictureId];
     },
     options() {
-      console.log(this.$store.state.options);
       return this.$store.state.options;
     },
     neighbors() {
@@ -79,7 +75,7 @@ export default {
     this.transitionState = true;
     this.displayPreviews = false;
     this.loadingPreviews = true;
-    this.nextPictureUrl = 'http://192.168.2.119' + '/full/' + to.params.pictureId + '.jpg';
+    this.nextPictureUrl = this.$store.getters.fullUrl(to.params.pictureId);
     setTimeout(() => {
       this.$store.dispatch('FETCH_NEIGHBORS', to.params.pictureId).then(() => {
         this.displayPreviews = true;
