@@ -9,9 +9,14 @@ from math import inf, exp
 def compute_distances_to(picture_id, frequencies=None):
     if frequencies is None:
         frequencies = Tag.objects.all().annotate(count=Count('picture'))
+    picture_occurrencies = Neighbors.objects.all().values('to_picture').annotate(count=Count('id'))
+    total_pictures = Neighbors.objects.all().values('from_picture').count()
+    target_occurrency = 1 if total_pictures == 0 else  Neighbors.objects.all().count() / total_pictures
     main_picture = Picture.objects.get(id=picture_id)
     main_tags = main_picture.tags.all()
-
+    # 1000 voisins
+    #200 photos
+    # Chaque photo doit apparaître 5 = 1000/200 fois
     distances = {}
     pictures = Picture.objects.all()
     start = time.time()
@@ -19,6 +24,11 @@ def compute_distances_to(picture_id, frequencies=None):
     nb_0 = 0
     time_0 = 0
     for picture in pictures:
+        picture_occurrency = 1
+        try:
+            picture_occurrency = picture_occurrencies.get(to_picture__id=picture_id).id__count
+        except:
+            pass
         start_int = time.time()
         if str(picture.id) == picture_id:
             distances[str(picture_id)] = 99999999
@@ -35,12 +45,14 @@ def compute_distances_to(picture_id, frequencies=None):
             nb_0 += 1
             time_0 += end_int - start_int
         distances[str(picture.id)] = 1/dist if dist != 0 else 999999
+        distances[str(picture.id)] += (picture_occurrency - target_occurrency)/target_occurrency*distances[str(picture.id)]
     end = time.time()
     print('compute distances to : {} ms'.format(end - start))
     print('nb0 {}, time0 {}'.format(nb_0, time_0))
     return distances
 
 def has_to_be_computed(picture_id, nb_neighbors=20):
+    #return random() < 0.05
     neighbors = Neighbors.objects.filter(from_picture__id=picture_id)
     if 0 in [n.distance for n in neighbors]:
         return True
