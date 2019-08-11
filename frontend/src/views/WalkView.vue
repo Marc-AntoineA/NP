@@ -49,7 +49,14 @@ export default {
       return this.$store.state.options;
     },
     neighbors() {
-      return this.$store.getters.neighbors(this.pictureId).slice(0, 5);
+      const neighbors = this.$store.getters.neighbors(this.pictureId);
+      for (let i = neighbors.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = neighbors[i];
+        neighbors[i] = neighbors[j];
+        neighbors[j] = temp;
+      }
+      return neighbors.slice(0, 5);
     }
   },
   methods: {

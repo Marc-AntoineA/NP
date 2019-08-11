@@ -20,7 +20,7 @@ import paramiko
 from PIL import Image
 import json
 from random import random, randint
-from .graph_utils import compute_distances_to, get_neighbors_from_distances, has_to_be_computed_again, compute_neighbors_to, get_random_neighbors
+from .graph_utils import get_neighbors
 
 class AllGraph(APIView):
     def get(self, request, format=None):
@@ -28,9 +28,7 @@ class AllGraph(APIView):
         pictures = Picture.objects.all()
         frequencies = Tag.objects.all().annotate(count=Count('picture'))
         for picture in pictures:
-            if has_to_be_computed_again(str(picture.id)):
-                compute_neighbors_to(str(picture.id))
-            graph[str(picture.id)] = [n.id for n in Neighbors.objects.get(from_picture__id=picture.id).to_pictures.all()]
+            graph[str(picture.id)] = [id for (id, distance) in get_neighbors(picture.id, nb_neighbors=5, frequencies=frequencies)]
         return Response(graph)
 
 class AllNeighborsOfNode(APIView):
@@ -40,22 +38,18 @@ class AllNeighborsOfNode(APIView):
 
     # todo optim l'algo
     def get(self, request, picture_id, format=None):
-        print(request.user)
-        if True:#has_to_be_computed_again(picture_id):
-            compute_neighbors_to(picture_id)
 
-        # neighbors = Neighbors.objects.get(from_picture__id=picture_id).to_pictures.all()
-
-        neighbors = get_random_neighbors(picture_id, nb_neighbors=5)
+        neighbors = get_neighbors(picture_id)#, nb_neighbors=5)
         neighbors_result = []
-        for neighbor_id in neighbors:
+        for (neighbor_id, distance) in neighbors:
             # todo check if order
             (from_image, to_image) = (neighbor_id, picture_id) if neighbor_id < picture_id else (picture_id, neighbor_id)
             neighbors_result.append({
                 'id': from_image + '__' + to_image,
                 'from': from_image,
                 'to': to_image,
-                'tags_new_node': [tag.tag for tag in Picture.objects.get(id=neighbor_id).tags.all()]
+                'tags_new_node': [tag.tag for tag in Picture.objects.get(id=neighbor_id).tags.all()],
+                'distance': distance
                 });
         return Response(neighbors_result)
 
@@ -174,3 +168,14 @@ def preview_private_picture(request, type, picture_id):
         return response
     except:
         return HttpResponseForbidden()
+
+def visualize_neighbors(request, picture_id):
+
+    response = '<ul>'
+    neighbors = get_neighbors(picture_id, 5)
+    for (picture_id, distance) in neighbors:
+        response += '<li> <img src="http://localhost/thumbnail/{}.jpg"></img>{} </li>'.format(picture_id, distance)
+
+    response += '</ul>'
+
+    return HttpResponse(response)
