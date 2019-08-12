@@ -113,27 +113,25 @@ def test_upload_picture(request):
     image.thumbnail(size)
     image.save(picture_id + '_thumbnail.jpg')
 
-
     settings = fs.open('settings_sftp.json', 'r')
     settings = settings.read()
     settings = json.loads(settings)
-
-    transport = paramiko.Transport((settings['SFTP_HOST'], settings['SFTP_PORT']))
-    transport.connect(username=settings['SFTP_USER'], password=settings['SFTP_PASSWORD'])
-
-    sftp = paramiko.SFTPClient.from_transport(transport)
 
     filepath = 'full/{}.jpg'.format(picture.id)
     localpath = '{}.jpg'.format(picture.id)
     transfert_failed = False
     try:
-        sftp.put(picture_id + '.jpg', 'full/' + picture_id + '.jpg')
-        sftp.put(picture_id + '_thumbnail.jpg', 'thumbnails/' + picture_id + '.jpg')
-    except:
-        transfert_failed = True
+        transport = paramiko.Transport((settings['SFTP_HOST'], settings['SFTP_PORT']))
+        transport.connect(username=settings['SFTP_USER'], password=settings['SFTP_PASSWORD'])
 
-    sftp.close()
-    transport.close()
+        sftp = paramiko.SFTPClient.from_transport(transport)
+        sftp.put(picture_id + '.jpg', 'full/' + picture_id + '.jpg')
+        sftp.put(picture_id + '_thumbnail.jpg', 'thumbnail/' + picture_id + '.jpg')
+        sftp.close()
+        transport.close()
+    except Exception as e:
+        transfert_failed = True
+        print(e)
 
     fs.delete(picture_id + '_thumbnail.jpg')
     fs.delete(picture_id + '.jpg')

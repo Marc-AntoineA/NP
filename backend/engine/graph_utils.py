@@ -31,7 +31,7 @@ def compute_distances_to(picture_id, frequencies=None):
             pass
         start_int = time.time()
         if str(picture.id) == picture_id:
-            distances[str(picture_id)] = 99999999
+            distances[str(picture_id)] = 9999999
             continue
         common_tags = main_tags.intersection(picture.tags.all())
         dist = 0
@@ -52,6 +52,7 @@ def compute_distances_to(picture_id, frequencies=None):
     return distances
 
 def has_to_be_computed(picture_id, nb_neighbors=20):
+    #return True
     #return random() < 0.05
     neighbors = Neighbors.objects.filter(from_picture__id=picture_id)
     if 0 in [n.distance for n in neighbors]:
@@ -59,7 +60,8 @@ def has_to_be_computed(picture_id, nb_neighbors=20):
     if len(neighbors) < nb_neighbors:
         return True
     last_uploaded_image_date = Picture.objects.all().aggregate(Max('created_at'))['created_at__max']
-    return last_uploaded_image_date > neighbors[0].updated_at == 0
+    return False
+    #return last_uploaded_image_date > neighbors[0].updated_at == 0
 
 
 def compute_neighbors(picture_id, frequencies=None, nb_neighbors=20):

@@ -6,3 +6,4 @@ django-cors-headers
 mysqlclient
 Pillow
 djangorestframework_simplejwt
+django-brutebuster2

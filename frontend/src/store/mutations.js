@@ -37,6 +37,13 @@ export default {
     Vue.set(state.user, 'username', '');
     Vue.set(state.user, 'token', '');
   },
+  CLEAR_STATE: (state) => {
+    state.nodes = {};
+    state.edges = {};
+    state.tags = {};
+    state.options = [];
+    state.graph = {};
+  },
   RESET_GRAPH: (state) => {
     state.nodes = {};
     state.edges = {};

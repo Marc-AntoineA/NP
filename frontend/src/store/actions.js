@@ -188,6 +188,7 @@ export default {
     return new Promise((resolve, reject) => {
       localStorage.removeItem('user');
       commit('REMOVE_USER');
+      commit('CLEAR_STATE');
       resolve();
     });
   },
