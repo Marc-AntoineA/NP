@@ -5,7 +5,7 @@
         <li v-if='displayed.indexOf("home") !== -1' class='tool-button tooltip' title="Retourner au graphe">
           <button @click='goHome()'><font-awesome-icon class='icon-tool' size='2x' icon="home"/></button>
         </li>
-        <li v-if='displayed.indexOf("signout") !== -1' class='tool-button tooltip' title="Se deconnecter">
+        <li v-if='displayed.indexOf("signout") !== -1' class='tool-button tooltip' title="Se déconnecter">
           <button @click='signOut()'><font-awesome-icon class='icon-tool' size='2x' icon="sign-out-alt"/></button>
         </li>
         <li v-if='displayed.indexOf("populate") !== -1' class='tool-button tooltip' v-bind:class="{ 'automated-mode': automatedMode }"
@@ -24,15 +24,15 @@
         <li v-if='displayed.indexOf("walk") !== -1' class='tool-button tooltip' title="Ouvrir la marche aléatoire">
           <button @click='goWalk()'><font-awesome-icon class='icon-tool' size='2x' icon="hiking"/></button>
         </li>
-        <li v-if='displayed.indexOf("share") !== -1' class='tool-button tooltip' title="Partager cette photo">
+        <!-- <li v-if='displayed.indexOf("share") !== -1' class='tool-button tooltip' title="Partager cette photo">
           <button @click='shareImage()'><font-awesome-icon class='icon-tool' size='2x' icon="share-alt"/></button>
-        </li>
-        <li v-if='displayed.indexOf("help") !== -1' class='tool-button tooltip' title="Une interrogation ?">
+        </li> -->
+        <!-- <li v-if='displayed.indexOf("help") !== -1' class='tool-button tooltip' title="Une interrogation ?">
           <button @click='showHelp()'><font-awesome-icon class='icon-tool' size='2x' icon="question"/></button>
-        </li>
-        <li v-if='displayed.indexOf("stats") !== -1' class='tool-button tooltip' title="Quelques statistiques">
+        </li> -->
+        <!-- <li v-if='displayed.indexOf("stats") !== -1' class='tool-button tooltip' title="Quelques statistiques">
           <button @click='goStatistics()'><font-awesome-icon class='icon-tool' size='2x' icon="info"/></button>
-        </li>
+        </li> -->
       </ul>
     </div>
     <div class='progress-bar' :style='"width:" + this.automatedProgress + "%"'/>

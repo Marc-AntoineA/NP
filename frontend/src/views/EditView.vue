@@ -17,7 +17,8 @@
       </ul>
     </div>
 
-    <p-picture-tools :displayed="['home', 'walk', 'signout', 'share', 'help', 'stats', 'random']"/>
+    <p-picture-tools :displayed="['home', 'walk', 'signout', 'share', 'help', 'stats', 'random']"
+      @random-image='loadRandomImage()' @go-walk='openRandomWalk()'/>
   </div>
 </template>
 
@@ -62,7 +63,16 @@ export default {
     },
     changePicture(pictureId) {
       this.$router.push({ name: 'edit', params: { pictureId: pictureId }});
-    }
+    },
+    loadRandomImage() {
+      this.$store.dispatch('FETCH_RANDOM_PICTURE').then((node) => {
+        const pictureId = node.id;
+        this.$router.push({ name: 'edit', params: { pictureId: pictureId }});
+      });
+    },
+    openRandomWalk() {
+      this.$router.push({ name: 'walk', params: { pictureId: this.pictureId }});
+    },
   },
   beforeRouteUpdate(to, from, next) {
     this.$store.dispatch('FETCH_TAGS', to.params.pictureId);

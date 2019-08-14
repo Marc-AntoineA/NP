@@ -16,7 +16,8 @@ urlpatterns = [
     path('pictures/less-tagged/<int:nb_pictures>', views.ListPicturesLessTags.as_view()),
     path('pictures/random', views.GetRandomPicture.as_view()),
     re_path(r'^private-static/(?P<type>full|thumbnail)/(?P<picture_id>[\w-]+)/$', views.preview_private_picture),
-    path('test/neighbors/<str:picture_id>', views.visualize_neighbors)
+    path('test/neighbors/<str:picture_id>', views.visualize_neighbors),
+    path('tests/tags/<str:tag>', views.visualize_tag),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

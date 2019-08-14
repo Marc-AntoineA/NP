@@ -13,6 +13,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Count, Min
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.decorators import login_required
 
 import hashlib
 from .models import *
@@ -36,6 +38,7 @@ class AllNeighborsOfNode(APIView):
     List all neighbors available for a given node
     """
 
+    permission_classes = [IsAuthenticated]
     # todo optim l'algo
     def get(self, request, picture_id, format=None):
 
@@ -55,7 +58,7 @@ class AllNeighborsOfNode(APIView):
 
 
 class TagsView(APIView):
-
+    permission_classes = [IsAuthenticated]
     def get(self, request, picture_id, format=None):
         tags = Picture.objects.get(id=picture_id).tags.all()
         response = [tag.tag for tag in tags]
@@ -72,6 +75,7 @@ class TagsView(APIView):
 
 
 class AllTagsView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
         tags = Tag.objects.all()
         response = [tag.tag for tag in tags]
@@ -79,6 +83,7 @@ class AllTagsView(APIView):
 
 
 class GetRandomPicture(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
         count = Picture.objects.count()
         random_picture = Picture.objects.all()[randint(0, count - 1)]
@@ -86,7 +91,7 @@ class GetRandomPicture(APIView):
         return Response({ 'id': random_picture.id, 'tags': [tag.tag for tag in random_picture.tags.all()] })
 
 
-# todo warning.
+@login_required
 @csrf_exempt
 def test_upload_picture(request):
     if (not request.method) or ('picture' not in request.FILES):
@@ -142,16 +147,19 @@ def test_upload_picture(request):
     else:
         return HttpResponse('Image uploaded successfully', status='201')
 
+@login_required
 def delete_picture(request, picture_id):
     Picture.objects.get(id=picture_id).delete()
     return HttpResponse('done')
 
 
 class ListPicturesLessTags(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, nb_pictures, format=None):
         pictures = Picture.objects.annotate(nb_tags=Count('tags')).order_by('nb_tags')
         response = [{ 'id': picture.id, 'nb_tags': picture.nb_tags} for picture in pictures[:nb_pictures]]
         return Response(response)
+
 
 def preview_private_picture(request, type, picture_id):
     try:
@@ -167,12 +175,27 @@ def preview_private_picture(request, type, picture_id):
     except:
         return HttpResponseForbidden()
 
+@login_required
 def visualize_neighbors(request, picture_id):
 
     response = '<ul>'
     neighbors = get_neighbors(picture_id, 5)
     for (picture_id, distance) in neighbors:
         response += '<li> <img src="http://localhost/thumbnail/{}.jpg"></img>{} </li>'.format(picture_id, distance)
+
+    response += '</ul>'
+
+    return HttpResponse(response)
+
+
+@login_required
+def visualize_tag(request, tag):
+
+    response = '<ul>'
+    tag = Tag.objects.get(tag=tag)
+    pictures = Picture.objects.filter(tags__in=[tag])
+    for picture in pictures:
+        response += '<li> <img src="http://localhost/full/{}.jpg"></img> </li>'.format(picture.id)
 
     response += '</ul>'
 
