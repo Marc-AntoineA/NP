@@ -5,11 +5,9 @@
       @node-selection='onNodeSelection' @edge-selection='onEdgeSelection'
       @node-double-selection='onNodeDoubleSelection' @edge-double-selection='onEdgeDoubleSelection'
       @node-deselection='onNodeDeselection'/>
-    <ul class='displayed-tags'>
-      <li v-for='tag in currentTags'>{{ tag }}</li>
-    </ul>
     <p-picture-tools :displayed='displayed' :populationDelay='5000'
       @go-walk='goWalk()' @edit-image='editImage()' @random-image='randomImage()' @populate='populate()'/>
+    <p-list-tags :currentTags='currentTags' :alwaysDisplay='true'/>
   </div>
 </template>
 
@@ -18,10 +16,11 @@
 import PNetwork from '../components/Network.vue';
 import PSearchHeader from '../components/SearchHeader.vue';
 import PPictureTools from '../components/PictureTools.vue';
+import PListTags from '../components/ListTags.vue';
 
 export default {
   name: 'Home',
-  components: { PNetwork, PSearchHeader, PPictureTools },
+  components: { PNetwork, PSearchHeader, PPictureTools, PListTags },
   data: () => ({
     selectedNode: undefined,
     displayed: ['signout', 'help', 'stats', 'random', 'populate', 'clean']
@@ -88,22 +87,4 @@ export default {
   height: 100vh;
   background-color: #111;
 }
-
-.displayed-tags {
-	list-style: none;
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	margin: 0;
-	padding: 0;
-  background-color: #666;
-  opacity: 0.8;
-}
-
-.displayed-tags li {
-	display: inline-block;
-	padding: 5px;
-	color: #ddd;
-}
-
 </style>

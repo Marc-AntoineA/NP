@@ -17,20 +17,19 @@
     <p-picture-tools :displayed="['home', 'random', 'populate', 'edit', 'help', 'stats', 'home', 'share', 'signout']"
       :populationDelay='10000'
       @random-image='loadRandomImage()' @populate='randomWalk()' @edit-image='editImage()'/>
+    <p-list-tags :currentTags='tags' :alwaysDisplay='false'/>
   </div>
 </template>
 
 <script>
 import PPictureTools from '../components/PictureTools.vue';
 import PSpinner from '../components/Spinner.vue';
+import PListTags from '../components/ListTags.vue';
 
 export default {
   name: 'Walk',
   props: {},
-  components: {
-    PSpinner,
-    PPictureTools
-  },
+  components: { PSpinner, PPictureTools, PListTags, },
   data: () => ({
     loading: true,
     loadingPreviews: true,
