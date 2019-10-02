@@ -23,7 +23,7 @@ export default {
   components: { PNetwork, PSearchHeader, PPictureTools, PListTags },
   data: () => ({
     selectedNode: undefined,
-    displayed: ['signout', 'help', 'stats', 'random', 'populate', 'clean']
+    displayed: ['signout', 'help', 'stats', 'random', 'populate', 'clean', 'upload']
   }),
   methods: {
     onNodeSelection: function(imageId) {

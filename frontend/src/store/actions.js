@@ -7,7 +7,8 @@ import {
   fetchWholeGraph,
   fetchLessTaggedPictures,
   fetchToken,
-  refreshToken
+  refreshToken,
+  uploadPicture
  } from '../api';
 
 export default {
@@ -217,4 +218,22 @@ export default {
       });
     });
   },
+  UPLOAD_PICTURE: ({ commit, state, dispatch }, picture) => {
+    return new Promise((resolve, reject) => {
+      uploadPicture(state.user.token, picture)
+      .then(() => {
+        resolve();
+      }).catch(({ code, error }) => {
+        if (code == 401) {
+          dispatch('REFRESH_TOKEN').then(() => {
+            dispatch('FETCH_LESS_TAGGED_PICTURES')
+            .then(() => resolve())
+            .catch(({ error }) => reject(error));
+          });
+          return;
+        }
+        reject(error);
+      });
+    });
+  }
 }

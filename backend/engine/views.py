@@ -15,6 +15,7 @@ from django.db.models import Count, Min
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.decorators import login_required
+from rest_framework.parsers import FileUploadParser
 
 import hashlib
 from .models import *
@@ -23,8 +24,10 @@ from PIL import Image
 import json
 from random import random, randint
 from .graph_utils import get_neighbors
+from imagehash import whash
 
 class AllGraph(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
         graph = {}
         pictures = Picture.objects.all()
@@ -90,62 +93,60 @@ class GetRandomPicture(APIView):
 
         return Response({ 'id': random_picture.id, 'tags': [tag.tag for tag in random_picture.tags.all()] })
 
+class UploadPicture(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = (FileUploadParser,)
 
-@login_required
-@csrf_exempt
-def test_upload_picture(request):
-    if (not request.method) or ('picture' not in request.FILES):
-        raise Http404
+    def post(self, request, format=None):
+        file_obj = request.FILES['picture']
+        # do some stuff with uploaded file
+        hash = str(picture_image.read())
 
+        # todo check format (jpg only)
+        picture = Picture(hash=hash)
+        try:
+            picture.save()
+        except IntegrityError:
+            # 409: Conflict
+            return HttpResponse('Already uploaded image (same hash)', status='409')
 
-    picture_image = request.FILES['picture']
-    hash = hashlib.sha224(picture_image.read()).hexdigest()
+            picture_id = str(picture.id)
+            fs = FileSystemStorage()
+            fs.save('{}.jpg'.format(picture_id), picture_image)
 
-    # todo check format (jpg only)
-    picture = Picture(hash=hash)
-    try:
-        picture.save()
-    except IntegrityError:
-        # 409: Conflict
-        return HttpResponse('Already uploaded image (same hash)', status='409')
+            image = Image.open(picture_id + '.jpg')
+            size = (364, 364)
+            image.thumbnail(size)
+            image.save(picture_id + '_thumbnail.jpg')
 
-    picture_id = str(picture.id)
-    fs = FileSystemStorage()
-    fs.save('{}.jpg'.format(picture_id), picture_image)
+            settings = fs.open('settings_sftp.json', 'r')
+            settings = settings.read()
+            settings = json.loads(settings)
 
-    image = Image.open(picture_id + '.jpg')
-    size = (364, 364)
-    image.thumbnail(size)
-    image.save(picture_id + '_thumbnail.jpg')
+            filepath = 'full/{}.jpg'.format(picture.id)
+            localpath = '{}.jpg'.format(picture.id)
+            transfert_failed = False
+            try:
+                transport = paramiko.Transport((settings['SFTP_HOST'], settings['SFTP_PORT']))
+                transport.connect(username=settings['SFTP_USER'], password=settings['SFTP_PASSWORD'])
 
-    settings = fs.open('settings_sftp.json', 'r')
-    settings = settings.read()
-    settings = json.loads(settings)
+                sftp = paramiko.SFTPClient.from_transport(transport)
+                sftp.put(picture_id + '.jpg', 'full/' + picture_id + '.jpg')
+                sftp.put(picture_id + '_thumbnail.jpg', 'thumbnail/' + picture_id + '.jpg')
+                sftp.close()
+                transport.close()
+            except Exception as e:
+                transfert_failed = True
+                print(e)
 
-    filepath = 'full/{}.jpg'.format(picture.id)
-    localpath = '{}.jpg'.format(picture.id)
-    transfert_failed = False
-    try:
-        transport = paramiko.Transport((settings['SFTP_HOST'], settings['SFTP_PORT']))
-        transport.connect(username=settings['SFTP_USER'], password=settings['SFTP_PASSWORD'])
+                fs.delete(picture_id + '_thumbnail.jpg')
+                fs.delete(picture_id + '.jpg')
 
-        sftp = paramiko.SFTPClient.from_transport(transport)
-        sftp.put(picture_id + '.jpg', 'full/' + picture_id + '.jpg')
-        sftp.put(picture_id + '_thumbnail.jpg', 'thumbnail/' + picture_id + '.jpg')
-        sftp.close()
-        transport.close()
-    except Exception as e:
-        transfert_failed = True
-        print(e)
-
-    fs.delete(picture_id + '_thumbnail.jpg')
-    fs.delete(picture_id + '.jpg')
-
-    if transfert_failed:
-        picture.delete()
-        return HttpResponse('Error in transfert. Nothing done.', status='504')
-    else:
-        return HttpResponse('Image uploaded successfully', status='201')
+                if transfert_failed:
+                    picture.delete()
+                    return HttpResponse('Error in transfert. Nothing done.', status='504')
+                else:
+                    return HttpResponse('Image uploaded successfully', status='201')
 
 @login_required
 def delete_picture(request, picture_id):

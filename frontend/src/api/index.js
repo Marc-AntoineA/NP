@@ -99,3 +99,14 @@ export function refreshToken(token) {
     token: '',
   }, 'post');
 }
+
+export function uploadPicture(token, picture) {
+
+  console.log(API_PATH + 'picture/upload');
+  console.log(picture);
+  return request({
+    url: API_PATH + 'picture/upload',
+    data: picture,
+    token: token.access
+  }, 'post');
+}

@@ -8,6 +8,7 @@ const LoginView = () => import('../views/LoginView.vue');
 const HomeView = () => import('../views/HomeView.vue');
 const EditView = () => import('../views/EditView.vue');
 const WalkView = () => import('../views/WalkView.vue');
+const UploadView = () => import('../views/UploadView.vue');
 const GraphAnalyzerView = () => import('../views/GraphAnalyzerView.vue');
 
 export function createRouter() {
@@ -44,6 +45,12 @@ export function createRouter() {
         path: '/analyze',
         name: 'analyze',
         component: GraphAnalyzerView,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: '/upload',
+        name: 'upload',
+        component: UploadView,
         meta: { requiresAuth: true }
       }
     ]

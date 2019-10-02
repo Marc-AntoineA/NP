@@ -9,7 +9,7 @@ urlpatterns = [
     path('login/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('neighbors', views.AllGraph.as_view()),
     path('neighbors/<str:picture_id>/', views.AllNeighborsOfNode.as_view()),
-    path('picture/upload', views.test_upload_picture),
+    path('picture/upload', views.UploadPicture.as_view()),
     path('picture/delete/<str:picture_id>', views.delete_picture),
     path('tags', views.AllTagsView.as_view()),
     path('tags/<str:picture_id>', views.TagsView.as_view()),

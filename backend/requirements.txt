@@ -7,3 +7,4 @@ mysqlclient
 Pillow
 djangorestframework_simplejwt
 django-brutebuster2
+imagehash

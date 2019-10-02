@@ -24,6 +24,9 @@
         <li v-if='displayed.indexOf("walk") !== -1' class='tool-button tooltip' title="Ouvrir la marche aléatoire">
           <button @click='goWalk()'><font-awesome-icon class='icon-tool' size='2x' icon="hiking"/></button>
         </li>
+        <li v-if='displayed.indexOf("upload") !== -1' class='tool-button tooltip' title="Charger de nouvelles images">
+          <button @click='goUpload()'><font-awesome-icon class='icon-tool' size='2x' icon="upload"/></button>
+        </li>
         <!-- <li v-if='displayed.indexOf("share") !== -1' class='tool-button tooltip' title="Partager cette photo">
           <button @click='shareImage()'><font-awesome-icon class='icon-tool' size='2x' icon="share-alt"/></button>
         </li> -->
@@ -57,6 +60,9 @@ export default {
   methods: {
     goHome: function() {
       this.$router.push({ name: 'home' });
+    },
+    goUpload: function() {
+      this.$router.push({ name: 'upload' });
     },
     goWalk: function() {
       this.$emit('go-walk');
