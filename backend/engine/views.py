@@ -119,6 +119,11 @@ class UploadPicture(APIView):
             image.thumbnail(size)
             image.save(picture_id + '_thumbnail.jpg')
 
+            image = Image.open(picture_id + '.jpg')
+            size = (1080, 1080)
+            image.thumbnail(size)
+            image.save(picture_id + '_full.jpg')
+
             settings = fs.open('settings_sftp.json', 'r')
             settings = settings.read()
             settings = json.loads(settings)
@@ -131,7 +136,7 @@ class UploadPicture(APIView):
                 transport.connect(username=settings['SFTP_USER'], password=settings['SFTP_PASSWORD'])
 
                 sftp = paramiko.SFTPClient.from_transport(transport)
-                sftp.put(picture_id + '.jpg', 'full/' + picture_id + '.jpg')
+                sftp.put(picture_id + '_full.jpg', 'full/' + picture_id + '.jpg')
                 sftp.put(picture_id + '_thumbnail.jpg', 'thumbnail/' + picture_id + '.jpg')
                 sftp.close()
                 transport.close()
